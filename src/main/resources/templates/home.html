@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bind Study Cafe</title>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f7f7;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 공통 헤더 시작 -->
+    <div th:replace="~{ commons/header.html}"></div>
+    <!-- 공통 헤더 끝 -->
+
+<div class="login-container">
+    <h2 class="text-center mb-4">Login to Study Cafe</h2>
+
+    <form action="/login" th:object="${loginDto}" method="post">
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+               th:text="${err}">글로벌 오류 메시지</p>
+        </div>
+
+        <div class="mb-3">
+                <input type="text" class="form-control" name="loginId" th:field="*{loginId}" th:placeholder="#{member.id}" required>
+        </div>
+        <div class="mb-3">
+            <input type="password" class="form-control" name="password" th:placeholder="#{member.password}" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100" th:text="#{home.login}">Login</button>
+    </form>
+    <div class="text-center mt-3">
+        <a  th:onclick="|location.href='@{/members/add}'|" class="text-primary text-decoration-none" th:text="#{home.signUp}">Sign up</a>
+    </div>
+</div>
+
+</body>
+</html>

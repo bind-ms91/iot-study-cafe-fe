@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript">
+        function setFormAction() {
+            var form = document.getElementById('languageForm');
+            form.action = window.location.pathname + window.location.search;
+        }
+
+        function setLanguageAndRetainData() {
+            var form = document.getElementById('languageForm');
+            var params = new URLSearchParams(window.location.search);
+            var language = document.getElementById('languageSelector').value;
+
+            // 현재 페이지의 모든 입력 요소 값을 params에 추가
+            document.querySelectorAll('input').forEach(input => {
+                if (input.name) {
+                    params.set(input.name, input.value);
+                }
+            });
+
+            // 언어 설정 값 추가
+            params.set('lang', language);
+            window.location.search = params.toString();
+        }
+
+    </script>
+</head>
+<body onload="setFormAction()">
+<header>
+    <form id="languageForm" method="get">
+        <label for="languageSelector" style="position: absolute; top: 10px; left: 1090px;">Language:</label>
+        <select name="lang" id="languageSelector" style="position: absolute; top: 10px; left: 1170px;" onchange="setLanguageAndRetainData()">
+            <option value="ko" th:selected="${#locale.language == 'ko'}">한국어</option>
+            <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+        </select>
+    </form>
+</header>
+</body>
+</html>
