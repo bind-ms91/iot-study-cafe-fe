@@ -1,7 +1,8 @@
 package bind.iotstudycafe.commons.exampleDomain.service;
 
 import bind.iotstudycafe.commons.exampleDomain.domain.ExampleDomain;
-import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainDto;
+import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSave;
+import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSearchCond;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,21 +32,21 @@ public class ExampleDomainServiceImpl implements ExampleDomainService{
 
 
     @Override
-    public Mono<ResponseEntity<ExampleDomain>> saveToEntity(ExampleDomain exampleDomain) {
+    public Mono<ResponseEntity<ExampleDomain>> saveToEntity(ExampleDomainSave exampleDomainSave) {
 
         return iotCafeWebClient.post()
                 .uri(RequestMapping+"/save")
-                .bodyValue(exampleDomain)
+                .bodyValue(exampleDomainSave)
                 .retrieve()
                 .toEntity(ExampleDomain.class);
     }
 
     @Override
-    public Mono<ExampleDomain> saveBodyToMono(ExampleDomain exampleDomain) {
+    public Mono<ExampleDomain> saveBodyToMono(ExampleDomainSave exampleDomainSave) {
 
         return iotCafeWebClient.post()
                 .uri(RequestMapping+"/save")
-                .bodyValue(exampleDomain)
+                .bodyValue(exampleDomainSave)
                 .retrieve()
                 .bodyToMono(ExampleDomain.class);
     }
@@ -73,25 +74,25 @@ public class ExampleDomainServiceImpl implements ExampleDomainService{
     }
 
     @Override
-    public Mono<ResponseEntity<List<ExampleDomain>>> findExampleDomainsToEntityList(ExampleDomain exampleDomain) {
+    public Mono<ResponseEntity<List<ExampleDomain>>> findExampleDomainsToEntityList(ExampleDomainSearchCond exampleDomainSearchCond) {
         return iotCafeWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(RequestMapping+"/list")
-                        .queryParam("name", exampleDomain.getName())
-                        .queryParam("age", exampleDomain.getAge())
+                        .queryParam("name", exampleDomainSearchCond.getName())
+                        .queryParam("age", exampleDomainSearchCond.getAge())
                         .build())
                 .retrieve()
                 .toEntityList(ExampleDomain.class);
     }
 
     @Override
-    public List<ExampleDomain> findExampleDomainsBodyToFlux(ExampleDomain exampleDomain) {
+    public List<ExampleDomain> findExampleDomainsBodyToFlux(ExampleDomainSearchCond exampleDomainSearchCond) {
 
         Flux<ExampleDomain> exampleDomainFlux = iotCafeWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(RequestMapping + "/list")
-                        .queryParam("name", exampleDomain.getName())
-                        .queryParam("age", exampleDomain.getAge())
+                        .queryParam("name", exampleDomainSearchCond.getName())
+                        .queryParam("age", exampleDomainSearchCond.getAge())
                         .build())
                 .retrieve()
                 .bodyToFlux(ExampleDomain.class);

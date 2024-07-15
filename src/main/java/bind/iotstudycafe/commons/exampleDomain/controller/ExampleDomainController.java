@@ -1,7 +1,8 @@
 package bind.iotstudycafe.commons.exampleDomain.controller;
 
 import bind.iotstudycafe.commons.exampleDomain.domain.ExampleDomain;
-import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainDto;
+import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSave;
+import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSearchCond;
 import bind.iotstudycafe.commons.exampleDomain.service.ExampleDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,45 +29,33 @@ public class ExampleDomainController {
 
 
     @PostMapping("/entity/save")
-    public Mono<ResponseEntity<ExampleDomain>> saveToEntity(@Validated @ModelAttribute("exampleDomainDto") ExampleDomainDto exampleDomainDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        log.info("ExampleDomainController.save post exampleDomain: {}", exampleDomainDto);
+    public Mono<ResponseEntity<ExampleDomain>> saveToEntity(@Validated @ModelAttribute("exampleDomainSave") ExampleDomainSave exampleDomainSave, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        log.info("ExampleDomainController.save post exampleDomain: {}", exampleDomainSave);
 
         /**
          * TODO
          * 검증로직 필요
          */
 
-        ExampleDomain exampleDomain = new ExampleDomain();
-        exampleDomain.setLoginId(exampleDomainDto.getLoginId());
-        exampleDomain.setPassword(exampleDomainDto.getPassword());
-        exampleDomain.setName(exampleDomainDto.getName());
-        exampleDomain.setAge(exampleDomainDto.getAge());
-
-        log.info("ExampleDomainController.save post exampleDomain: {}", exampleDomain);
+        log.info("ExampleDomainController.save post exampleDomainSave: {}", exampleDomainSave);
 
 
-        return exampleDomainService.saveToEntity(exampleDomain);
+        return exampleDomainService.saveToEntity(exampleDomainSave);
     }
 
     @PostMapping("/body/save")
     @ResponseBody
-    public Mono<ExampleDomain> saveBodyToMono(@Validated @ModelAttribute("exampleDomainDto") ExampleDomainDto exampleDomainDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        log.info("ExampleDomainController.save post exampleDomain: {}", exampleDomainDto);
+    public Mono<ExampleDomain> saveBodyToMono(@Validated @ModelAttribute("exampleDomainSave") ExampleDomainSave exampleDomainSave, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        log.info("ExampleDomainController.save post exampleDomainSave: {}", exampleDomainSave);
 
         /**
          * TODO
          * 검증로직 필요
          */
 
-        ExampleDomain exampleDomain = new ExampleDomain();
-        exampleDomain.setLoginId(exampleDomainDto.getLoginId());
-        exampleDomain.setPassword(exampleDomainDto.getPassword());
-        exampleDomain.setName(exampleDomainDto.getName());
-        exampleDomain.setAge(exampleDomainDto.getAge());
+        log.info("ExampleDomainController.save post exampleDomainSave: {}", exampleDomainSave);
 
-        log.info("ExampleDomainController.save post exampleDomain: {}", exampleDomain);
-
-        return exampleDomainService.saveBodyToMono(exampleDomain);
+        return exampleDomainService.saveBodyToMono(exampleDomainSave);
     }
 
 
@@ -88,28 +77,21 @@ public class ExampleDomainController {
     }
 
     @GetMapping("/entity/list")
-    public Mono<ResponseEntity<List<ExampleDomain>>> findExampleDomainsToEntityList(@Validated @ModelAttribute("exampleDomainDto") ExampleDomainDto exampleDomainDto, Model model) {
+    public Mono<ResponseEntity<List<ExampleDomain>>> findExampleDomainsToEntityList(@Validated @ModelAttribute("exampleDomainSearchCondDto") ExampleDomainSearchCond exampleDomainSearchCond, Model model) {
 
-        ExampleDomain exampleDomain = new ExampleDomain();
-        exampleDomain.setName(exampleDomainDto.getName());
-        exampleDomain.setAge(exampleDomainDto.getAge());
+        log.info("ExampleDomainController.findExampleDomainsToEntityList exampleDomainSearchCondDto: {}", exampleDomainSearchCond);
 
-        log.info("findExampleDomains post exampleDomain: {}", exampleDomain);
-
-        return exampleDomainService.findExampleDomainsToEntityList(exampleDomain);
+        return exampleDomainService.findExampleDomainsToEntityList(exampleDomainSearchCond);
     }
 
     @GetMapping("/body/list")
     @ResponseBody
-    public List<ExampleDomain> findExampleDomainsBodyToFlux(@Validated @ModelAttribute("exampleDomainDto") ExampleDomainDto exampleDomainDto, Model model) {
+    public List<ExampleDomain> findExampleDomainsBodyToFlux(@Validated @ModelAttribute("exampleDomainSearchCondDto") ExampleDomainSearchCond exampleDomainSearchCond, Model model) {
 
-        ExampleDomain exampleDomain = new ExampleDomain();
-        exampleDomain.setName(exampleDomainDto.getName());
-        exampleDomain.setAge(exampleDomainDto.getAge());
 
-        log.info("findExampleDomains post exampleDomain: {}", exampleDomain);
+        log.info("ExampleDomainController.findExampleDomainsBodyToFlux exampleDomainSearchCondDto: {}", exampleDomainSearchCond);
 
-        return exampleDomainService.findExampleDomainsBodyToFlux(exampleDomain);
+        return exampleDomainService.findExampleDomainsBodyToFlux(exampleDomainSearchCond);
     }
 
 }
