@@ -20,6 +20,7 @@ public class ExampleDomainSave {
     @NotBlank
     private String name;
 
+    @NotBlank
     @Range(min = 14, max = 200)
     private Integer age;
 

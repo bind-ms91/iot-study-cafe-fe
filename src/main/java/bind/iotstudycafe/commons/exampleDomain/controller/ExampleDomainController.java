@@ -3,6 +3,7 @@ package bind.iotstudycafe.commons.exampleDomain.controller;
 import bind.iotstudycafe.commons.exampleDomain.domain.ExampleDomain;
 import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSave;
 import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSearchCond;
+import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainUpdate;
 import bind.iotstudycafe.commons.exampleDomain.service.ExampleDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -93,5 +94,14 @@ public class ExampleDomainController {
 
         return exampleDomainService.findExampleDomainsBodyToFlux(exampleDomainSearchCond);
     }
+
+    @PutMapping("/update/{id}")
+    @ResponseBody
+    public Mono<Void> update(@PathVariable Long id,
+                             @Validated @RequestBody ExampleDomainUpdate updateParam) {
+
+        return exampleDomainService.update(id, updateParam);
+    }
+
 
 }

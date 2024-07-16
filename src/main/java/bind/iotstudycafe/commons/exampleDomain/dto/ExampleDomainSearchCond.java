@@ -14,7 +14,6 @@ public class ExampleDomainSearchCond {
     @NotBlank
     private String name;
 
-    @Range(min = 14, max = 200)
     private Integer age;
 
 }

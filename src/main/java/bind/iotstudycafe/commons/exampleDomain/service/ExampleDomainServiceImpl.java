@@ -3,6 +3,7 @@ package bind.iotstudycafe.commons.exampleDomain.service;
 import bind.iotstudycafe.commons.exampleDomain.domain.ExampleDomain;
 import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSave;
 import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSearchCond;
+import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainUpdate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +99,15 @@ public class ExampleDomainServiceImpl implements ExampleDomainService{
                 .bodyToFlux(ExampleDomain.class);
 
         return exampleDomainFlux.collectList().block();
+    }
+
+    @Override
+    public Mono<Void> update(Long id, ExampleDomainUpdate updateParam) {
+        return iotCafeWebClient.put()
+                .uri(RequestMapping+"/update/{id}",id)
+                .bodyValue(updateParam)
+                .retrieve()
+                .bodyToMono(Void.class);
     }
 
     //    @Override
