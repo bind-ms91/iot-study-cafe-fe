@@ -1,6 +1,7 @@
 package bind.iotstudycafe.commons.exampleDomain.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,7 @@ public class ExampleDomainSave {
     @NotBlank
     private String name;
 
-    @NotBlank
+    @NotNull
     @Range(min = 14, max = 200)
     private Integer age;
 

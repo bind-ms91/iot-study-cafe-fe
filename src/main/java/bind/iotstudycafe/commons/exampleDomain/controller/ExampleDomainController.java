@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/example")
 public class ExampleDomainController {
@@ -96,9 +96,11 @@ public class ExampleDomainController {
     }
 
     @PutMapping("/update/{id}")
-    @ResponseBody
     public Mono<Void> update(@PathVariable Long id,
-                             @Validated @RequestBody ExampleDomainUpdate updateParam) {
+                             @Validated @ModelAttribute ExampleDomainUpdate updateParam) {
+
+        log.info("ExampleDomainController.update post id: {}", id);
+        log.info("ExampleDomainController.update updateParam: {}", updateParam);
 
         return exampleDomainService.update(id, updateParam);
     }
