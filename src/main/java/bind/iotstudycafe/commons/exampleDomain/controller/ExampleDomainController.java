@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Slf4j
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/example")
 public class ExampleDomainController {
@@ -96,6 +96,7 @@ public class ExampleDomainController {
     }
 
     @PutMapping("/update/{id}")
+    @ResponseBody
     public Mono<Void> update(@PathVariable Long id,
                              @Validated @ModelAttribute ExampleDomainUpdate updateParam) {
 
@@ -103,6 +104,14 @@ public class ExampleDomainController {
         log.info("ExampleDomainController.update updateParam: {}", updateParam);
 
         return exampleDomainService.update(id, updateParam);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @ResponseBody
+    public Mono<Void> delete(@PathVariable Long id) {
+        log.info("ExampleDomainController.delete post id: {}", id);
+
+        return exampleDomainService.delete(id);
     }
 
 

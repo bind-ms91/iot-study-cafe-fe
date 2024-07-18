@@ -25,9 +25,5 @@ public interface ExampleDomainService {
 
     Mono<Void> update(Long id, ExampleDomainUpdate updateParam);
 
-//    Mono<ResponseEntity<List<ExampleDomain>>>
-//    List<ExampleDomain> findAll(ExampleDomain cond);
-//
-
-
+    Mono<Void> delete(Long id);
 }
