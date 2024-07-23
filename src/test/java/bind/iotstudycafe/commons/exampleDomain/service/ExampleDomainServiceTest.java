@@ -2,6 +2,7 @@ package bind.iotstudycafe.commons.exampleDomain.service;
 
 import bind.iotstudycafe.commons.config.WebClientConfig;
 import bind.iotstudycafe.commons.exampleDomain.domain.ExampleDomain;
+import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSave;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,9 @@ class ExampleDomainServiceTest {
         iotCafeWebClient = WebClient.builder()
                 .baseUrl(mockWebServer1.url("/").toString())
                 .build();
+
+        int mockWebServerPort = mockWebServer1.getPort();
+        log.info("mockWebServerPort = {}", mockWebServerPort);
 
 //        server1WebClient = WebClient.builder()
 //                .baseUrl(mockWebServer2.url("/").toString())
@@ -131,6 +135,40 @@ class ExampleDomainServiceTest {
                     log.info("body={}", domain);
                     Assertions.assertThat(exampleDomain).isEqualTo(domain);
                     return true;
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    void testSaveToEntity() throws JsonProcessingException {
+
+        //given
+        ExampleDomain exampleDomain = new ExampleDomain();
+
+        exampleDomain.setId(1L);
+        exampleDomain.setLoginId("ms91");
+        exampleDomain.setPassword("9999");
+        exampleDomain.setName("Cho");
+        exampleDomain.setAge(23);
+
+        ExampleDomainSave exampleDomainSave = new ExampleDomainSave();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        //when
+        mockWebServer1.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.OK.value())
+                .setHeader("Content-Type", "application/json")
+                .setBody(objectMapper.writeValueAsString(exampleDomain)));
+
+        Mono<ResponseEntity<ExampleDomain>> result = exampleDomainService.saveToEntity(exampleDomainSave);
+
+        StepVerifier.create(result)
+                .assertNext(response -> {
+                    assertEquals(HttpStatus.OK, response.getStatusCode());
+                    ExampleDomain body = response.getBody();
+                    log.info("body={}", body);
+                    Assertions.assertThat(exampleDomain).isEqualTo(body);
                 })
                 .verifyComplete();
     }
