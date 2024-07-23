@@ -5,6 +5,12 @@ import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSave;
 import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSearchCond;
 import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainUpdate;
 import bind.iotstudycafe.commons.exampleDomain.service.ExampleDomainService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +25,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+@Tag(name = "샘플그룹", description = "API 예제")
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -27,7 +34,6 @@ public class ExampleDomainController {
 
     @Autowired
     private ExampleDomainService exampleDomainService;
-
 
     @PostMapping("/entity/save")
     public Mono<ResponseEntity<ExampleDomain>> saveToEntity(@Validated @ModelAttribute("exampleDomainSave") ExampleDomainSave exampleDomainSave, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -60,6 +66,10 @@ public class ExampleDomainController {
     }
 
 
+    @Operation(summary = "id로 조회", description = "id로 조회",
+            parameters = {@Parameter(name = "id", description = "id")}
+//            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
+    )
     @GetMapping("/entity/{id}")
     public Mono<ResponseEntity<ExampleDomain>> findByIdToEntity(@PathVariable Long id) {
 
@@ -68,6 +78,10 @@ public class ExampleDomainController {
         return exampleDomainService.findByIdToEntity(id);
     }
 
+    @Operation(summary = "id로 조회", description = "id로 조회",
+            parameters = {@Parameter(name = "id", description = "id")}
+//            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
+    )
     @GetMapping("/body/{id}")
     @ResponseBody
     public Mono<ExampleDomain> findByIdBodyToMono(@PathVariable Long id) {
@@ -77,6 +91,9 @@ public class ExampleDomainController {
         return exampleDomainService.findByIdBodyToMono(id);
     }
 
+    @Operation(summary = "리스트 조회", description = "리스트 조회"
+//            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
+    )
     @GetMapping("/entity/list")
     public Mono<ResponseEntity<List<ExampleDomain>>> findExampleDomainsToEntityList(@Validated @ModelAttribute("exampleDomainSearchCondDto") ExampleDomainSearchCond exampleDomainSearchCond, Model model) {
 

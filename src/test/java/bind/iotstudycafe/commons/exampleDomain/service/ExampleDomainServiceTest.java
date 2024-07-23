@@ -9,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -143,15 +141,11 @@ class ExampleDomainServiceTest {
     void testSaveToEntity() throws JsonProcessingException {
 
         //given
-        ExampleDomain exampleDomain = new ExampleDomain();
-
-        exampleDomain.setId(1L);
-        exampleDomain.setLoginId("ms91");
-        exampleDomain.setPassword("9999");
-        exampleDomain.setName("Cho");
-        exampleDomain.setAge(23);
-
         ExampleDomainSave exampleDomainSave = new ExampleDomainSave();
+        exampleDomainSave.setLoginId("ms91");
+        exampleDomainSave.setPassword("9999");
+        exampleDomainSave.setName("Cho");
+        exampleDomainSave.setAge(23);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -159,7 +153,7 @@ class ExampleDomainServiceTest {
         mockWebServer1.enqueue(new MockResponse()
                 .setResponseCode(HttpStatus.OK.value())
                 .setHeader("Content-Type", "application/json")
-                .setBody(objectMapper.writeValueAsString(exampleDomain)));
+                .setBody(objectMapper.writeValueAsString(exampleDomainSave)));
 
         Mono<ResponseEntity<ExampleDomain>> result = exampleDomainService.saveToEntity(exampleDomainSave);
 
@@ -168,7 +162,10 @@ class ExampleDomainServiceTest {
                     assertEquals(HttpStatus.OK, response.getStatusCode());
                     ExampleDomain body = response.getBody();
                     log.info("body={}", body);
-                    Assertions.assertThat(exampleDomain).isEqualTo(body);
+                    Assertions.assertThat(body.getLoginId()).isEqualTo(exampleDomainSave.getLoginId());
+                    Assertions.assertThat(body.getPassword()).isEqualTo(exampleDomainSave.getPassword());
+                    Assertions.assertThat(body.getName()).isEqualTo(exampleDomainSave.getName());
+                    Assertions.assertThat(body.getAge()).isEqualTo(exampleDomainSave.getAge());
                 })
                 .verifyComplete();
     }
