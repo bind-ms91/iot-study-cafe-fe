@@ -1,4 +1,4 @@
-package bind.iotstudycafe.commons.exampleDomain.dto;
+package bind.iotstudycafe.exampleDomain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -8,15 +8,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
-@Schema(description = "저장DTO")
+@Schema(description = "수정DTO")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExampleDomainSave {
-
-    @Schema(description = "로그인 ID")
-    @NotBlank
-    private String loginId;
+public class ExampleDomainUpdate {
 
     @Schema(description = "비밀번호")
     @NotBlank

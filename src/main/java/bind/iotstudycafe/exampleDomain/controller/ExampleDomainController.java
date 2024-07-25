@@ -1,10 +1,10 @@
-package bind.iotstudycafe.commons.exampleDomain.controller;
+package bind.iotstudycafe.exampleDomain.controller;
 
-import bind.iotstudycafe.commons.exampleDomain.domain.ExampleDomain;
-import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSave;
-import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSearchCond;
-import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainUpdate;
-import bind.iotstudycafe.commons.exampleDomain.service.ExampleDomainService;
+import bind.iotstudycafe.exampleDomain.domain.ExampleDomain;
+import bind.iotstudycafe.exampleDomain.dto.ExampleDomainSave;
+import bind.iotstudycafe.exampleDomain.dto.ExampleDomainSearchCond;
+import bind.iotstudycafe.exampleDomain.dto.ExampleDomainUpdate;
+import bind.iotstudycafe.exampleDomain.service.ExampleDomainService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

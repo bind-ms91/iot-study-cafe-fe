@@ -1,4 +1,4 @@
-package bind.iotstudycafe.commons.exampleDomain.dto;
+package bind.iotstudycafe.exampleDomain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

@@ -1,26 +1,21 @@
-package bind.iotstudycafe.commons.exampleDomain.service;
+package bind.iotstudycafe.exampleDomain.service;
 
-import bind.iotstudycafe.commons.exampleDomain.domain.ExampleDomain;
-import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSave;
-import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainSearchCond;
-import bind.iotstudycafe.commons.exampleDomain.dto.ExampleDomainUpdate;
+import bind.iotstudycafe.exampleDomain.domain.ExampleDomain;
+import bind.iotstudycafe.exampleDomain.dto.ExampleDomainSave;
+import bind.iotstudycafe.exampleDomain.dto.ExampleDomainSearchCond;
+import bind.iotstudycafe.exampleDomain.dto.ExampleDomainUpdate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service

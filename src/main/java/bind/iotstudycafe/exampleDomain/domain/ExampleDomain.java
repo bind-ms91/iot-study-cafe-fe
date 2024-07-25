@@ -1,9 +1,7 @@
-package bind.iotstudycafe.commons.exampleDomain.domain;
+package bind.iotstudycafe.exampleDomain.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
 
 @Schema(description = "예제 객체")
 @Data
