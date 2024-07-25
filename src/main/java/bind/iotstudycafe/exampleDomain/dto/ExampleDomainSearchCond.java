@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Range;
 
 @Schema(description = "조회DTO")
 @Data
@@ -17,7 +16,7 @@ public class ExampleDomainSearchCond {
     @NotBlank
     private String name;
 
-    @Schema(description = "나이")
+    @Schema(description = "나이", implementation = Integer.class)
     private Integer age;
 
 }

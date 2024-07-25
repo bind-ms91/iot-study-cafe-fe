@@ -25,7 +25,10 @@ repositories {
 
 dependencies {
 
+	//스프링 타임리프
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	//스프링 웹
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	// MockWebServer 사용 외부 api 테스트

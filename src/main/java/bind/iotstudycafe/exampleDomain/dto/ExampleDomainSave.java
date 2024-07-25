@@ -26,7 +26,7 @@ public class ExampleDomainSave {
     @NotBlank
     private String name;
 
-    @Schema(description = "나이")
+    @Schema(description = "나이", implementation = Integer.class)
     @NotNull
     @Range(min = 14, max = 200)
     private Integer age;

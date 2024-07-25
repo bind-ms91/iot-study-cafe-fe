@@ -15,8 +15,10 @@ public class ExampleDomain {
 
     @Schema(description = "비밀번호")
     private String password;
+
     @Schema(description = "이름")
     private String name;
+
     @Schema(description = "나이")
     private Integer age;
 

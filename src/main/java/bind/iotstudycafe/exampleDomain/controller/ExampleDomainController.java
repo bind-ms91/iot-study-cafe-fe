@@ -6,13 +6,13 @@ import bind.iotstudycafe.exampleDomain.dto.ExampleDomainSearchCond;
 import bind.iotstudycafe.exampleDomain.dto.ExampleDomainUpdate;
 import bind.iotstudycafe.exampleDomain.service.ExampleDomainService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -39,7 +39,7 @@ public class ExampleDomainController {
             responses = {@ApiResponse(responseCode = "200", description = "저장 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
     )
     @PostMapping("/entity/save")
-    public Mono<ResponseEntity<ExampleDomain>> saveToEntity(@Validated @ModelAttribute("exampleDomainSave") ExampleDomainSave exampleDomainSave, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public Mono<ResponseEntity<ExampleDomain>> saveToEntity(@Validated @ParameterObject @ModelAttribute("exampleDomainSave") ExampleDomainSave exampleDomainSave, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         log.info("ExampleDomainController.save post exampleDomain: {}", exampleDomainSave);
 
         /**
@@ -58,7 +58,7 @@ public class ExampleDomainController {
     )
     @PostMapping("/body/save")
     @ResponseBody
-    public Mono<ExampleDomain> saveBodyToMono(@Validated @ModelAttribute("exampleDomainSave") ExampleDomainSave exampleDomainSave, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public Mono<ExampleDomain> saveBodyToMono(@Validated @ParameterObject @ModelAttribute("exampleDomainSave") ExampleDomainSave exampleDomainSave, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         log.info("ExampleDomainController.save post exampleDomainSave: {}", exampleDomainSave);
 
         /**
@@ -73,7 +73,6 @@ public class ExampleDomainController {
 
 
     @Operation(summary = "id로 조회", description = "id로 조회",
-            parameters = {@Parameter(name = "id", description = "id")},
             responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
     )
     @GetMapping("/entity/{id}")
@@ -85,7 +84,6 @@ public class ExampleDomainController {
     }
 
     @Operation(summary = "id로 조회", description = "id로 조회",
-            parameters = {@Parameter(name = "id", description = "id")},
             responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
     )
     @GetMapping("/body/{id}")
@@ -101,7 +99,7 @@ public class ExampleDomainController {
             responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
     )
     @GetMapping("/entity/list")
-    public Mono<ResponseEntity<List<ExampleDomain>>> findExampleDomainsToEntityList(@Validated @ModelAttribute("exampleDomainSearchCondDto") ExampleDomainSearchCond exampleDomainSearchCond, Model model) {
+    public Mono<ResponseEntity<List<ExampleDomain>>> findExampleDomainsToEntityList(@Validated @ParameterObject @ModelAttribute("exampleDomainSearchCondDto") ExampleDomainSearchCond exampleDomainSearchCond, Model model) {
 
         log.info("ExampleDomainController.findExampleDomainsToEntityList exampleDomainSearchCondDto: {}", exampleDomainSearchCond);
 
@@ -113,7 +111,7 @@ public class ExampleDomainController {
     )
     @GetMapping("/body/list")
     @ResponseBody
-    public List<ExampleDomain> findExampleDomainsBodyToFlux(@Validated @ModelAttribute("exampleDomainSearchCondDto") ExampleDomainSearchCond exampleDomainSearchCond, Model model) {
+    public List<ExampleDomain> findExampleDomainsBodyToFlux(@Validated @ParameterObject @ModelAttribute("exampleDomainSearchCondDto") ExampleDomainSearchCond exampleDomainSearchCond, Model model) {
 
 
         log.info("ExampleDomainController.findExampleDomainsBodyToFlux exampleDomainSearchCondDto: {}", exampleDomainSearchCond);
@@ -125,7 +123,7 @@ public class ExampleDomainController {
     @PutMapping("/update/{id}")
     @ResponseBody
     public Mono<Void> update(@PathVariable Long id,
-                             @Validated @ModelAttribute ExampleDomainUpdate updateParam) {
+                             @Validated @ParameterObject @ModelAttribute ExampleDomainUpdate updateParam) {
 
         log.info("ExampleDomainController.update post id: {}", id);
         log.info("ExampleDomainController.update updateParam: {}", updateParam);
