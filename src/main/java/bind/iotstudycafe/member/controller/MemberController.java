@@ -15,20 +15,4 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/add")
-    public String addFrom(@ModelAttribute("MemberSaveDto") MemberSaveDto MemberSaveDto) {
-        return "members/addMemberFrom";
-    }
-
-    @PostMapping("/add")
-    public String save(@Validated @ModelAttribute("MemberSaveDto") MemberSaveDto memberSaveDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "members/addMemberForm";
-        }
-
-        //TODO 회원 가입 예외 처리
-
-        memberService.save(memberSaveDto);
-        return "redirect:/";
-    }
 }

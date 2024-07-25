@@ -27,11 +27,28 @@ public class SwaggerConfig {
 //        }
 
         @Bean
-        public GroupedOpenApi publicApi() {
+        public GroupedOpenApi exampleApi() {
+
+                String[] pathsToMatch = {"/example/**"};
+
                 return GroupedOpenApi.builder()
-                        .group("샘플그룹")
-                        .pathsToMatch("/example/**")
+                        .group("예제그룹")
+                        .pathsToMatch("/example/**")            // group에 포함시킬 paths
                         .build();
         }
+
+        @Bean
+        public GroupedOpenApi publicApi() {
+
+                String[] pathsToMatch = {"**"};
+                String[] pathsToExclude = {"/example/**"};
+
+                return GroupedOpenApi.builder()
+                        .group("public")
+                        .pathsToMatch(pathsToMatch)
+                        .pathsToExclude(pathsToExclude)
+                        .build();
+        }
+
 
 }

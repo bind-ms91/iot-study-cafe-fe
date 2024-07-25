@@ -1,8 +1,12 @@
 package bind.iotstudycafe.member.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberUpdateDto {
 
     private String memberPassword;
@@ -10,13 +14,4 @@ public class MemberUpdateDto {
     private int age;
     private String memberGrade;
 
-    public MemberUpdateDto() {
-    }
-
-    public MemberUpdateDto(String memberPassword, String memberName, int age, String memberGrade) {
-        this.memberPassword = memberPassword;
-        this.memberName = memberName;
-        this.age = age;
-        this.memberGrade = memberGrade;
-    }
 }

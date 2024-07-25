@@ -2,7 +2,6 @@ package bind.iotstudycafe.commons.login.controller;
 
 import bind.iotstudycafe.commons.login.domain.LoginDto;
 import bind.iotstudycafe.commons.login.service.LoginService;
-import bind.iotstudycafe.commons.web.SessionConst;
 import bind.iotstudycafe.member.domain.Member;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,12 +37,6 @@ public class LoginController {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "/home";
         }
-
-        //로그인 성공 처리
-        //세션이 있으면 있는 세션 반환, 없으면 신규 세션을 생성
-        HttpSession session = request.getSession();
-        //세션에 로그인 회원 정보 보관
-        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
 
         return "ok";
     }

@@ -35,6 +35,9 @@ public class ExampleDomainController {
     @Autowired
     private ExampleDomainService exampleDomainService;
 
+    @Operation(summary = "저장", description = "저장",
+            responses = {@ApiResponse(responseCode = "200", description = "저장 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
+    )
     @PostMapping("/entity/save")
     public Mono<ResponseEntity<ExampleDomain>> saveToEntity(@Validated @ModelAttribute("exampleDomainSave") ExampleDomainSave exampleDomainSave, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         log.info("ExampleDomainController.save post exampleDomain: {}", exampleDomainSave);
@@ -50,6 +53,9 @@ public class ExampleDomainController {
         return exampleDomainService.saveToEntity(exampleDomainSave);
     }
 
+    @Operation(summary = "저장", description = "저장",
+            responses = {@ApiResponse(responseCode = "200", description = "저장 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
+    )
     @PostMapping("/body/save")
     @ResponseBody
     public Mono<ExampleDomain> saveBodyToMono(@Validated @ModelAttribute("exampleDomainSave") ExampleDomainSave exampleDomainSave, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -67,8 +73,8 @@ public class ExampleDomainController {
 
 
     @Operation(summary = "id로 조회", description = "id로 조회",
-            parameters = {@Parameter(name = "id", description = "id")}
-//            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
+            parameters = {@Parameter(name = "id", description = "id")},
+            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
     )
     @GetMapping("/entity/{id}")
     public Mono<ResponseEntity<ExampleDomain>> findByIdToEntity(@PathVariable Long id) {
@@ -79,8 +85,8 @@ public class ExampleDomainController {
     }
 
     @Operation(summary = "id로 조회", description = "id로 조회",
-            parameters = {@Parameter(name = "id", description = "id")}
-//            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
+            parameters = {@Parameter(name = "id", description = "id")},
+            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
     )
     @GetMapping("/body/{id}")
     @ResponseBody
@@ -91,8 +97,8 @@ public class ExampleDomainController {
         return exampleDomainService.findByIdBodyToMono(id);
     }
 
-    @Operation(summary = "리스트 조회", description = "리스트 조회"
-//            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
+    @Operation(summary = "리스트 조회", description = "리스트 조회",
+            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
     )
     @GetMapping("/entity/list")
     public Mono<ResponseEntity<List<ExampleDomain>>> findExampleDomainsToEntityList(@Validated @ModelAttribute("exampleDomainSearchCondDto") ExampleDomainSearchCond exampleDomainSearchCond, Model model) {
@@ -102,6 +108,9 @@ public class ExampleDomainController {
         return exampleDomainService.findExampleDomainsToEntityList(exampleDomainSearchCond);
     }
 
+    @Operation(summary = "리스트 조회", description = "리스트 조회",
+            responses = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ExampleDomain.class)))}
+    )
     @GetMapping("/body/list")
     @ResponseBody
     public List<ExampleDomain> findExampleDomainsBodyToFlux(@Validated @ModelAttribute("exampleDomainSearchCondDto") ExampleDomainSearchCond exampleDomainSearchCond, Model model) {
@@ -112,6 +121,7 @@ public class ExampleDomainController {
         return exampleDomainService.findExampleDomainsBodyToFlux(exampleDomainSearchCond);
     }
 
+    @Operation(summary = "수정", description = "수정")
     @PutMapping("/update/{id}")
     @ResponseBody
     public Mono<Void> update(@PathVariable Long id,
@@ -123,6 +133,7 @@ public class ExampleDomainController {
         return exampleDomainService.update(id, updateParam);
     }
 
+    @Operation(summary = "삭제", description = "삭제")
     @DeleteMapping("/delete/{id}")
     @ResponseBody
     public Mono<Void> delete(@PathVariable Long id) {

@@ -32,10 +32,8 @@ dependencies {
 	testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 	testImplementation 'io.projectreactor:reactor-test:3.6.8'
 
-
 	// Swagger 사용 (Spring 3.x.x 이상부터 SpringFox 대신, SpringDoc)
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
-	
 
 	//webClient 사용
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -50,19 +48,6 @@ dependencies {
 
 	// validation 사용
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-	//mysql 데이터베이스 추가
-	runtimeOnly 'com.mysql:mysql-connector-j'
-
-	//H2 데이터베이스 추가
-	runtimeOnly 'com.h2database:h2'
-
-	//querydsl dependencies 추가(스프링부트 3.0 이상)
-	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
-	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
-
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

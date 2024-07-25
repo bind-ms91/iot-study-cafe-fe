@@ -10,16 +10,4 @@ import java.util.Optional;
 
 public interface MemberService {
 
-    Member save(MemberSaveDto memberSaveDto);
-
-    Optional<Member> findById(Long id);
-
-    Optional<Member> findByMemberId(String memberId);
-
-    List<Member> findAll(MemberSearchCond cond);
-
-    void update(Long id, MemberUpdateDto updateParam);
-
-    void deleteById(Long id);
-
 }
