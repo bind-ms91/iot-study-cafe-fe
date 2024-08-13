@@ -2,9 +2,7 @@ package bind.iotstudycafe.commons.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
-import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
-import org.springdoc.core.properties.SwaggerUiConfigParameters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,7 +38,7 @@ public class SwaggerConfig {
         @Bean
         public GroupedOpenApi publicApi() {
 
-                String[] pathsToMatch = {"**"};
+                String[] pathsToMatch = {"/**"};
                 String[] pathsToExclude = {"/example/**"};
 
                 return GroupedOpenApi.builder()

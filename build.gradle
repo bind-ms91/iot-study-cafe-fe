@@ -31,6 +31,14 @@ dependencies {
 	//스프링 웹
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
+	//redis 사용
+//	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.session:spring-session-data-redis'
+
+	//스프링 Security
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
+//    testImplementation 'org.springframework.security:spring-security-test'
+
 	// MockWebServer 사용 외부 api 테스트
 	testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 	testImplementation 'io.projectreactor:reactor-test:3.6.8'

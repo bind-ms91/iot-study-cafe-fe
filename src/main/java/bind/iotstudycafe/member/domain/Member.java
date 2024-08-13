@@ -17,12 +17,12 @@ public class Member {
     public Member() {
     }
 
-    public Member(String memberId, String memberPassword, String memberName, Integer age, String memberGrade) {
+    public Member(String memberId, String memberPassword, String memberName, Integer age, MemberGrade memberGrade) {
         this.memberId = memberId;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
         this.age = age;
-        this.memberGrade = MemberGrade.valueOf(memberGrade);
+        this.memberGrade = memberGrade;
     }
 
 
