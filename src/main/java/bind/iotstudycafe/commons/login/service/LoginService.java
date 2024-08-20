@@ -5,7 +5,6 @@ import bind.iotstudycafe.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,7 +18,7 @@ public class LoginService {
     @Autowired
     private final WebClient iotCafeWebClient;
 
-    public Mono<ResponseEntity<Member>> login(LoginDto loginDto) {
+    public Mono<ResponseEntity<Member>> loginV1(LoginDto loginDto) {
 
         log.info("loginDto: {}", loginDto);
 
@@ -28,9 +27,18 @@ public class LoginService {
                 .bodyValue(loginDto)
                 .retrieve()
                 .toEntity(Member.class);
+//                .doOnNext(responseEntity -> {
+//                    // 쿠키 정보 저장
+//                    String cookieInfo = responseEntity.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
+//
+//                    log.info("cookieInfo: {}", cookieInfo);
+//                    if (cookieInfo != null) {
+//                        webClientConfig.setSessionCookie(cookieInfo);
+//                    }
+//                });
     }
 
-//    public Mono<ResponseEntity<Member>> login(LoginDto loginDto) {
+//    public Mono<ResponseEntity<Member>> loginV2(LoginDto loginDto) {
 //
 //        log.info("loginDto: {}", loginDto);
 //
@@ -38,30 +46,27 @@ public class LoginService {
 //                .uri("/login")
 //                .bodyValue(loginDto)
 //                .exchangeToMono(response -> {
-//                    // 세션을 가져오기 위한 응답 헤더 검사
-//                    String sessionId = response.cookies().getFirst("JSESSIONID").getValue();
+//                    // 로그인 성공 시 쿠키를 저장
+//                    String cookieInfo = response.headers().asHttpHeaders().getFirst(HttpHeaders.SET_COOKIE);
 //
-//                    log.info("sessionId: {}", sessionId);
+//                    log.info("cookieInfo: {}", cookieInfo);
 //
+//                    webClientCookieFilter.setCookie(cookieInfo);
 //                    // 세션 정보를 클라이언트로 전달하기 위해 HTTP 응답 헤더에 추가
 //                    return response.bodyToMono(Member.class)
-//                            .map(member -> ResponseEntity.ok()
-//                                    .header(HttpHeaders.SET_COOKIE, sessionId)
-//                                    .body(member)
-//                            );
+//                            .map(member -> ResponseEntity.ok().body(member));
 //                });
 //    }
 
-    public void logout(String sessionId) {
+    public void logout() {
 
-        if (sessionId != null) {
-            // WAS로 로그아웃 요청 전송
-            iotCafeWebClient.post()
+        log.info("logout");
+
+        // WAS로 로그아웃 요청 전송
+        iotCafeWebClient.post()
                     .uri("/logout")
-                    .header(HttpHeaders.COOKIE, sessionId)
                     .retrieve()
                     .bodyToMono(Void.class)
                     .block();
-        }
     }
 }

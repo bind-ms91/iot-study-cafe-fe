@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
@@ -68,7 +68,7 @@ public class LoginController {
             return "login/loginForm";
         }
 
-        Mono<ResponseEntity<Member>> loginMemberMono = loginService.login(loginDto);
+        Mono<ResponseEntity<Member>> loginMemberMono = loginService.loginV1(loginDto);
 
         // Mono를 구독하여 결과를 비동기적으로 처리
         return loginMemberMono.flatMap(responseEntity -> {
@@ -78,19 +78,7 @@ public class LoginController {
                 log.info("loginMember = {}", responseEntity.getBody());
 
                 // 세션 정보 가져오기
-                String sessionId = responseEntity.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
-                log.info("컨트롤러 sessionId = {}", sessionId);
-
-//                // 세션 정보를 HttpSession에 저장
-                HttpSession session = request.getSession();
-//                log.info("session = {}", session);
-                session.setAttribute("loginMember", responseEntity.getBody());
-                session.setAttribute("JSESSIONID", sessionId);
-
-//                // 클라이언트에게 세션 쿠키 전달
-//                if (sessionId != null) {
-//                    response.addHeader(HttpHeaders.SET_COOKIE, sessionId);
-//                }
+                extractedSessionId(response, responseEntity);
 
                 return Mono.just("redirect:" + redirectURL);
             } else {
@@ -116,21 +104,14 @@ public class LoginController {
             return deferredResult;
         }
 
-        Mono<ResponseEntity<Member>> loginMemberMono = loginService.login(loginDto);
+        Mono<ResponseEntity<Member>> loginMemberMono = loginService.loginV1(loginDto);
 
         loginMemberMono.subscribe(responseEntity -> {
             if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
                 log.info("loginMember = {}", responseEntity.getBody());
 
                 // 세션 정보 가져오기
-                String sessionId = responseEntity.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
-
-                request.setAttribute("member", responseEntity.getBody());
-
-                // 클라이언트에게 전달하기 위해 Set-Cookie 헤더를 설정
-                response.addHeader(HttpHeaders.SET_COOKIE, sessionId + "; Path=/; HttpOnly");
-
-
+//                extractedSessionId(request, responseEntity);
 
                 deferredResult.setResult("redirect:" + redirectURL);
             } else {
@@ -158,16 +139,13 @@ public class LoginController {
             return Mono.just("login/loginForm");
         }
 
-        return loginService.login(loginDto)
+        return loginService.loginV1(loginDto)
                 .flatMap(responseEntity -> {
                     if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
                         log.info("loginMember = {}", responseEntity.getBody());
 
                         // 세션 정보 가져오기
-                        String sessionId = responseEntity.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
-
-                        // 클라이언트에게 전달하기 위해 Set-Cookie 헤더를 설정
-                        response.addHeader(HttpHeaders.SET_COOKIE, sessionId + "; Path=/; HttpOnly");
+//                        extractedSessionId(request, responseEntity);
 
                         return Mono.just("redirect:" + redirectURL);
                     } else {
@@ -186,32 +164,108 @@ public class LoginController {
             responses = {@ApiResponse(responseCode = "200", description = "로그아웃 성공")}
     )
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
 
-        HttpSession session = request.getSession(false);
+        String sessionId = request.getHeader(HttpHeaders.COOKIE);
 
-        Member Member = (Member) session.getAttribute("loginMember");
-        String sessionId = session.getAttribute("JSESSIONID").toString();
-
-        log.info("Member = {}", Member);
         log.info("sessionId = {}", sessionId);
-
-        // 클라이언트로부터 세션 쿠키를 가져옴
 
         if (sessionId != null) {
 
-            // 로그아웃 서비스 호출
-            loginService.logout(sessionId);
+            loginService.logout();
 
+            // 쿠키 삭제 (클라이언트 측에 전달)
+            expireCookie(response);
+        }
+
+
+
+//
+//        log.info("sessionId = {}", sessionId);
+//
+//        if (sessionId != null) {
+//            loginService.logout(sessionId);
+//        }
+
+//        // 쿠키 추출
+//        Optional<Cookie> findCookie = Arrays.stream(request.getCookies())
+//                .filter(cookie -> cookie.getName().equals("JSESSIONID"))
+//                .findFirst();
+//
+//        log.info("findCookie = {}", findCookie);
+//
+//        if (findCookie.isPresent()) {
+//            Cookie cookie = findCookie.get();
+//            String sessionId = cookie.getValue();
+//
+//            log.info("sessionId = {}", sessionId);
+//            loginService.logout(sessionId);
+//        }
+
+
+
+//        if(sessionId != null) {
+//            loginService.logout(sessionId);
+//        }
+
+//        if (findCookie.isPresent()) {
+//            String sessionId = findCookie.get().getValue();
+//
+//            log.info("logout sessionId = {}", sessionId);
+//
+//            loginService.logout(sessionId);
+//        }
+
+//        String sessionId = request.getAttribute("JSESSIONID").toString();
+//
+//        log.info("sessionId = {}", sessionId);
+//
+//        if (sessionId != null) {
+//
+//            // 로그아웃 서비스 호출
+//            loginService.logout(sessionId);
+//
 //            // 세션 무효화
-//            session.invalidate();
+////            session.invalidate();
+//
+//        }
+
+        // 쿠키 삭제 (클라이언트 측에 전달)
+        expireCookie(response);
+
+        return "redirect:/";
+    }
+
+    private static void extractedSessionId(HttpServletResponse response, ResponseEntity<Member> responseEntity) {
+
+        // 쿠기 정보 가져오기
+        String cookieInfo  = responseEntity.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
+
+        log.info("login cookieInfo  = {}", cookieInfo );
+
+        // 클라이언트에게 세션 쿠키 전달
+        if (cookieInfo != null) {
+
+//            // 세션 ID 추출
+//            String sessionId = cookieInfo.split(";")[0].split("=")[1];
+//            // 유효 시간 추출
+//            int maxAge = Integer.parseInt(cookieInfo.split(";")[1].split("=")[1]);
+//
+//            log.info("Extracted sessionId: {}", sessionId);
+//            log.info("Extracted maxAge: {}", maxAge);
+//
+//            // 쿠키 객체를 생성
+//            Cookie cookie = new Cookie("JSESSIONID", sessionId);
+//            cookie.setPath("/"); // 쿠키가 유효할 경로 설정
+//            cookie.setHttpOnly(true); // 자바스크립트에서 접근할 수 없도록 설정
+//            cookie.setMaxAge(maxAge); // 쿠키 유효 시간 설정
+//
+//            // 응답에 쿠키 추가
+//            response.addCookie(cookie);
+            response.addHeader(HttpHeaders.SET_COOKIE, cookieInfo);
 
         }
 
-        // 세션 쿠키 삭제 (클라이언트 측에 전달)
-//        expireCookie(response);
-
-        return "redirect:/";
     }
 
 //    @PostMapping("/logout")
@@ -223,10 +277,10 @@ public class LoginController {
 //        return "redirect:/";
 //    }
 
-//    private static void expireCookie(HttpServletResponse response) {
-//        Cookie cookie = new Cookie("JSESSIONID", null);
-//        cookie.setMaxAge(0);
-//        response.addCookie(cookie);
-//    }
+    private static void expireCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+    }
 
 }
