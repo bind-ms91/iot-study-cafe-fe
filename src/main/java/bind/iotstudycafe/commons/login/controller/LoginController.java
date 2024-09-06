@@ -1,5 +1,6 @@
 package bind.iotstudycafe.commons.login.controller;
 
+import bind.iotstudycafe.commons.login.SessionAuthenticationToken;
 import bind.iotstudycafe.commons.login.domain.LoginDto;
 import bind.iotstudycafe.commons.login.service.LoginService;
 import bind.iotstudycafe.member.domain.Member;
@@ -13,15 +14,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import reactor.core.publisher.Mono;
 
@@ -30,7 +34,13 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class LoginController {
 
+
     private final LoginService loginService;
+
+    private final AuthenticationManager authenticationManager;
+
+
+
 
 //    @ResponseBody
 //    @PostMapping("/login")
@@ -58,6 +68,36 @@ public class LoginController {
     @Operation(summary = "로그인", description = "동기 로그인",
             responses = {@ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = LoginDto.class)))}
     )
+    @PostMapping("/login")
+    @ResponseBody
+    public String login(@Validated @ParameterObject @ModelAttribute("loginDto") LoginDto loginDto, BindingResult bindingResult
+            ,@RequestParam(defaultValue ="/") String redirectURL, HttpServletRequest request, HttpServletResponse response) {
+
+        // 인증 요청 생성
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(loginDto.getLoginId(), loginDto.getPassword());
+
+        // 인증 시도
+        Authentication authentication = authenticationManager.authenticate(token);
+
+        // 인증 성공 시, 컨텍스트에 저장
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 세션 ID를 인증 객체에서 가져옴
+        String sessionId = ((SessionAuthenticationToken) authentication).getSessionId();
+
+        log.info("controller sessionId: {}", sessionId);
+
+        response.addHeader(HttpHeaders.SET_COOKIE, sessionId);
+
+        // 로그인 성공 후 리다이렉트
+        return "redirect:"+redirectURL;
+    }
+
+
+    @Operation(summary = "로그인", description = "동기 로그인",
+            responses = {@ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = LoginDto.class)))}
+    )
     @PostMapping("/loginSynchronous")
     @ResponseBody
     public String loginSynchronous(@Validated @ParameterObject @ModelAttribute("loginDto") LoginDto loginDto, BindingResult bindingResult
@@ -68,14 +108,14 @@ public class LoginController {
             return "login/loginForm";
         }
 
-        Mono<ResponseEntity<Member>> loginMemberMono = loginService.loginV1(loginDto);
+        Mono<ResponseEntity<Member>> loginMemberMono = loginService.login(loginDto);
 
         // Mono를 구독하여 결과를 비동기적으로 처리
         return loginMemberMono.flatMap(responseEntity -> {
             log.info("responseEntity.getStatusCode() = {}", responseEntity.getStatusCode());
             log.info("responseEntity.getBody() = {}", responseEntity.getBody());
+
             if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
-                log.info("loginMember = {}", responseEntity.getBody());
 
                 // 세션 정보 가져오기
                 extractedSessionId(response, responseEntity);
@@ -104,7 +144,7 @@ public class LoginController {
             return deferredResult;
         }
 
-        Mono<ResponseEntity<Member>> loginMemberMono = loginService.loginV1(loginDto);
+        Mono<ResponseEntity<Member>> loginMemberMono = loginService.login(loginDto);
 
         loginMemberMono.subscribe(responseEntity -> {
             if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
@@ -139,7 +179,7 @@ public class LoginController {
             return Mono.just("login/loginForm");
         }
 
-        return loginService.loginV1(loginDto)
+        return loginService.login(loginDto)
                 .flatMap(responseEntity -> {
                     if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
                         log.info("loginMember = {}", responseEntity.getBody());
@@ -163,8 +203,8 @@ public class LoginController {
     @Operation(summary = "로그아웃", description = "로그아웃",
             responses = {@ApiResponse(responseCode = "200", description = "로그아웃 성공")}
     )
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping("/logoutV1")
+    public String logoutV1(HttpServletRequest request, HttpServletResponse response) {
 
         String sessionId = request.getHeader(HttpHeaders.COOKIE);
 
@@ -234,6 +274,29 @@ public class LoginController {
         expireCookie(response);
 
         return "redirect:/";
+    }
+
+    @Operation(summary = "로그아웃", description = "로그아웃",
+            responses = {@ApiResponse(responseCode = "200", description = "로그아웃 성공")}
+    )
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+
+        // 1. 현재 인증 객체를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        log.info("authentication = {}", authentication);
+
+        if (authentication != null) {
+
+            loginService.logout();
+
+            // 3. SecurityContextHolder에서 인증 객체 제거
+            SecurityContextHolder.clearContext();
+
+        }
+
+        return "redirect:/";  // 로그아웃 후 리다이렉트할 URL
     }
 
     private static void extractedSessionId(HttpServletResponse response, ResponseEntity<Member> responseEntity) {

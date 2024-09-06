@@ -32,7 +32,7 @@
 <div class="login-container">
     <h2 class="text-center mb-4">Login to Study Cafe</h2>
 
-    <form action="/login" th:object="${loginDto}" method="post">
+    <form action="/loginSynchronous" th:object="${loginDto}" method="post">
 
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"

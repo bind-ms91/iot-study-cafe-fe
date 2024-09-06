@@ -3,9 +3,11 @@ package bind.iotstudycafe.commons.login.domain;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class LoginDto {
 
     @NotBlank(message = "아이디는 필수 입력값입니다.")

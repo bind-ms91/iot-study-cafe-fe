@@ -1,7 +1,14 @@
 package bind.iotstudycafe.commons.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,17 +19,29 @@ import org.springframework.context.annotation.Configuration;
                 description = "바인드 Iot Study Cafe API 문서",
                 version = "v1"
         )
+//        ,servers = {
+//                @Server(url = "/api/swagger", description = "Default swagger URL")
+//        }
 )
+
 @Configuration
 public class SwaggerConfig {
 
 //        @Bean
 //        public OpenAPI customOpenAPI() {
+//
 //                return new OpenAPI()
-//                        .info(new Info().title("Example API")
-//                                .description("Example API documentation")
-//                                .version("v1.0"));
+//                        .info(new Info()
+//                                .title("API Documentation")
+//                                .version("1.0"))
+//                        .addSecurityItem(new SecurityRequirement().addList("basicAuth"))
+//                        .components(new io.swagger.v3.oas.models.Components()
+//                                .addSecuritySchemes("basicAuth",
+//                                        new SecurityScheme()
+//                                                .type(SecurityScheme.Type.HTTP)
+//                                                .scheme("basic")));
 //        }
+
 
         @Bean
         public GroupedOpenApi exampleApi() {

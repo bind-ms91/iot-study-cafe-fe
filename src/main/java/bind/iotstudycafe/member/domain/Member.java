@@ -1,7 +1,14 @@
 package bind.iotstudycafe.member.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
+
+@Schema(description = "회원 객체")
 @Data
 public class Member {
 
