@@ -7,8 +7,8 @@ import reactor.core.publisher.Mono;
 
 public interface LoginService {
 
-    public Mono<ResponseEntity<Member>> login(LoginDto loginDto);
+    Mono<ResponseEntity<Member>> login(LoginDto loginDto);
 
-    public void logout();
+    void logout();
 
 }

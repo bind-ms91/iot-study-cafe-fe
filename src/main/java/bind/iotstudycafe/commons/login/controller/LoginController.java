@@ -204,7 +204,8 @@ public class LoginController {
             responses = {@ApiResponse(responseCode = "200", description = "로그아웃 성공")}
     )
     @PostMapping("/logoutV1")
-    public String logoutV1(HttpServletRequest request, HttpServletResponse response) {
+    public String logoutV1(HttpServletRequest request, HttpServletResponse response,
+                           @RequestParam(defaultValue = "/") String redirectURL) {
 
         String sessionId = request.getHeader(HttpHeaders.COOKIE);
 
@@ -270,17 +271,18 @@ public class LoginController {
 //
 //        }
 
-        // 쿠키 삭제 (클라이언트 측에 전달)
-        expireCookie(response);
-
-        return "redirect:/";
+        // 로그아웃 성공 후 리다이렉트
+        return "redirect:"+redirectURL;
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃",
             responses = {@ApiResponse(responseCode = "200", description = "로그아웃 성공")}
     )
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping("/logoutt")
+    public String logout(HttpServletRequest request, HttpServletResponse response,
+                         @RequestParam(defaultValue = "/") String redirectURL) {
+
+        log.info("logout 컨트롤러 실행");
 
         // 1. 현재 인증 객체를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -291,12 +293,16 @@ public class LoginController {
 
             loginService.logout();
 
-            // 3. SecurityContextHolder에서 인증 객체 제거
+            // 2. SecurityContextHolder에서 인증 객체 제거
             SecurityContextHolder.clearContext();
+
+            // 3. 쿠키 삭제 (클라이언트 측에 전달)
+            expireCookie(response);
 
         }
 
-        return "redirect:/";  // 로그아웃 후 리다이렉트할 URL
+        // 로그아웃 성공 후 리다이렉트
+        return "redirect:"+redirectURL;
     }
 
     private static void extractedSessionId(HttpServletResponse response, ResponseEntity<Member> responseEntity) {

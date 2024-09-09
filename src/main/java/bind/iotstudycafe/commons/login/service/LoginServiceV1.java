@@ -30,7 +30,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LoginServiceV1 implements LoginService, AuthenticationProvider {
 
-    @Autowired
     private final WebClient iotCafeWebClient;
 
     @Override
@@ -38,6 +37,8 @@ public class LoginServiceV1 implements LoginService, AuthenticationProvider {
 
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
+
+        log.info("password = {} ", password);
 
         // WAS 서버로 인증 요청 및 세션 ID 반환받기
         Mono<ResponseEntity<Member>> responseMono = iotCafeWebClient.post()
@@ -95,8 +96,6 @@ public class LoginServiceV1 implements LoginService, AuthenticationProvider {
 
     @Override
     public void logout() {
-
-        log.info("logout");
 
         // WAS로 로그아웃 요청 전송
         iotCafeWebClient.post()

@@ -60,7 +60,7 @@ public class WebSecurityConfig {
                     // Swagger 관련 경로 모두 예외 처리
 //                    .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**")
 //                    .permitAll()
-                    .requestMatchers("/**").permitAll()
+//                    .requestMatchers("/**").permitAll()
 //                    .requestMatchers("/css/**").permitAll()
                     .anyRequest().authenticated() // 그 외 요청은 인증 필요
             )
@@ -68,13 +68,14 @@ public class WebSecurityConfig {
             .cors(withDefaults())  // CORS 설정 추가
             .formLogin(form -> form
                     .loginPage("/")
+                    .loginProcessingUrl("login")
                     .usernameParameter("loginId")
                     .passwordParameter("password")
                     .permitAll()
             )
             .logout( logout -> logout
-                    .logoutUrl("/logout")
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST")) // logoutUrl과 logoutRequestMatcher가 둘다 설정되어있을경우 RequestMatcher가 우선적으로 실행된다.
+                    .logoutUrl("logoutt")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("logoutt")) // logoutUrl과 logoutRequestMatcher가 둘다 설정되어있을경우 RequestMatcher가 우선적으로 실행된다.
                     .deleteCookies("JSESSIONID")  // 세션 쿠키 삭제
                     .permitAll()
             );
