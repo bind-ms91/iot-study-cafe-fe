@@ -13,4 +13,8 @@ import java.util.Optional;
 public interface MemberService {
 
     Mono<Member> saveBodyToMono(MemberSaveDto memberSaveDto);
+
+    boolean isMemberIdExists(String memberId);
+
+    Member saveMember(MemberSaveDto memberSaveDto);
 }

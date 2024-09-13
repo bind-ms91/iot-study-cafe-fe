@@ -23,6 +23,10 @@ public class MemberSaveDto {
     @NotBlank
     private String memberPassword;
 
+    @Schema(description = "비밀번호 확인")
+    @NotBlank
+    private String memberPasswordCheck;
+
     @Schema(description = "이름")
     @NotBlank
     private String memberName;

@@ -22,6 +22,16 @@
             width: 300px;
         }
     </style>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            var success = [[${signupSuccess ?: 'null'}]];  // Thymeleaf 변수 `signupSuccess`를 JS 변수로 할당 기본값 사용
+            if (success === true) {
+                alert(document.getElementById("signUpSuccessMessage").value);
+            }
+        });
+    </script>
+
 </head>
 <body>
 
@@ -29,10 +39,12 @@
     <div th:replace="~{ commons/header.html}"></div>
     <!-- 공통 헤더 끝 -->
 
-<div class="login-container">
+    <input type="hidden" id="signUpSuccessMessage" th:value="#{signUp.success}"> <!-- 회원가입 성공 메시지 -->
+
+    <div class="login-container">
     <h2 class="text-center mb-4">Login to Study Cafe</h2>
 
-    <form action="/loginSynchronous" th:object="${loginDto}" method="post">
+    <form action="/login" th:object="${loginDto}" method="post">
 
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"
@@ -48,7 +60,7 @@
         <button type="submit" class="btn btn-primary w-100" th:text="#{home.login}">Login</button>
     </form>
     <div class="text-center mt-3">
-        <a  th:onclick="|location.href='@{/members/add}'|" class="text-primary text-decoration-none" th:text="#{home.signUp}">Sign up</a>
+        <button type="submit" class="btn btn-primary w-100" th:onclick="|location.href='@{/members/save}'|" th:text="#{home.signUp}">Sign up</button>
     </div>
 </div>
 

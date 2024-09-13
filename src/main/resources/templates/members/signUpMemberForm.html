@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bind Study Cafe</title>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // 회원가입 실패 시
+            var success = [[${signupSuccess ?: 'null'}]];  // Thymeleaf 변수 `signupSuccess`를 JS 변수로 할당 기본값 true 사용
+            console.log(success);
+
+            if (success === false) {
+                alert(document.getElementById("signUpFailedMessage").value);
+            }
+
+            var duplicateId = [[${duplicateId ?: 'null'}]];
+
+            if (duplicateId === true) {
+                alert(document.getElementById("duplicateMessage").value);
+            }
+
+
+        });
+
+        // 중복 체크 여부를 저장할 변수
+        var isDuplicateChecked = false;
+
+        // 비밀번호 일치 여부를 저장할 변수
+        var isPasswordCheck = false;
+
+        // 중복 체크 실행 함수
+        function checkDuplicate() {
+            var memberId = document.getElementById("memberId").value;
+
+            // 아이디 입력하지 않았을 때 경고 메시지 출력 (다국어 처리된 메시지 사용)
+            var noIdMessage = document.getElementById("noIdMessage").value;
+
+            if (!memberId) {
+                alert(noIdMessage); // 다국어 처리된 경고 메시지 사용
+                return;
+            }
+
+            fetch("/members/check-duplicate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ "memberId": memberId })
+            })
+                .then(response => response.json())
+                .then(isDuplicate => {
+                    var resultElement = document.getElementById("result");
+                    resultElement.style.color = isDuplicate ? "red" : "green";
+                    resultElement.innerHTML = document.getElementById(isDuplicate ? "duplicateMessage" : "availableMessage").value;
+                    isDuplicateChecked = !isDuplicate;
+                });
+        }
+
+        // 비밀번호 일치 확인 함수
+        function checkPasswordMatch() {
+            var password = document.getElementById("memberPassword").value;
+            var passwordCheck = document.getElementById("memberPasswordCheck").value;
+            var matchMessage = document.getElementById("passwordMatchMessage");
+
+            if (password && passwordCheck) {
+                if (password === passwordCheck) {
+                    isPasswordCheck = true;
+                    matchMessage.className = "match-success";
+                    matchMessage.style.color = "green";
+                    matchMessage.innerText = document.getElementById("passwordMatchSuccessMessage").value;
+                } else {
+                    isPasswordCheck = false;
+                    matchMessage.className = "match-error";
+                    matchMessage.style.color = "red";
+                    matchMessage.innerText = document.getElementById("passwordMatchErrorMessage").value;
+                }
+            } else {
+                matchMessage.innerText = "";
+            }
+        }
+
+        // 회원가입 전 중복 체크 여부를 확인하는 함수
+        function validateAndSubmitForm() {
+            if (!isDuplicateChecked) {
+                // 중복 체크가 이루어지지 않았을 경우 경고 메시지 출력
+                alert(document.getElementById("checkRequiredMessage").value);
+                return false; // 폼 제출 중단
+            }
+
+            if (!isPasswordCheck) {
+                // 중복 체크가 이루어지지 않았을 경우 경고 메시지 출력
+                alert(document.getElementById("passwordMismatchAlertMessage").value);
+                return false; // 폼 제출 중단
+            }
+
+            return true;
+        }
+
+    </script>
+
+</head>
+<body>
+<div class="container">
+
+    <!-- 공통 헤더 시작 -->
+    <div th:replace="~{ commons/header.html}"></div>
+    <!-- 공통 헤더 끝 -->
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{home.signUp}">회원 가입</h2>
+    </div>
+
+    <h4 class="mb-3" th:text="#{member.info}">회원 정보 입력</h4>
+
+    <!-- 다국어 메시지를 숨겨진 input에 넣어 전달 -->
+    <input type="hidden" id="duplicateMessage" th:value="#{alreadyInUseId}">
+    <input type="hidden" id="availableMessage" th:value="#{available}">
+    <input type="hidden" id="noIdMessage" th:value="#{member.id.required}">
+    <input type="hidden" id="passwordMatchErrorMessage" th:value="#{passwordInCorrect}">
+    <input type="hidden" id="passwordMatchSuccessMessage" th:value="#{passwordsMatch}">
+    <input type="hidden" id="passwordMismatchAlertMessage" th:value="#{passwordInCorrect}"> <!-- 비밀번호 일치 알림 -->
+    <input type="hidden" id="checkRequiredMessage" th:value="#{duplicateCheckRequired}"> <!-- 중복 체크 메시지 알림 -->
+    <input type="hidden" id="signUpSuccessMessage" th:value="#{signUp.success}"> <!-- 회원가입 성공 메시지 -->
+    <input type="hidden" id="signUpFailedMessage" th:value="#{signUp.failed}"> <!-- 회원가입 실패 메시지 -->
+
+
+    <!-- 회원가입 폼 -->
+    <form action="" method="post" th:object="${memberSaveDto}" onsubmit="return validateAndSubmitForm();">
+        <div>
+            <label for="memberId" th:text="#{member.id}">아이디</label>
+            <div class="input-group">
+                <input type="text" id="memberId" th:field="*{memberId}" class="form-control" th:errorclass="field-error">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-primary" onclick="checkDuplicate()" th:text="#{duplicateCheck}">중복 체크</button>
+                </div>
+            </div>
+            <!-- 중복 체크 결과가 표시될 영역 -->
+            <div id="result" class="mt-3"></div>
+            <div class="field-error" th:errors="*{memberId}"></div>
+        </div>
+
+        <div>
+            <label for="memberPassword" th:text="#{member.password}">비밀번호</label>
+            <input type="password" id="memberPassword" th:field="*{memberPassword}" class="form-control" oninput="checkPasswordMatch()" th:errorclass="field-error">
+            <div class="field-error" th:errors="*{memberPassword}"></div>
+        </div>
+
+        <div>
+            <label for="memberPassword" th:text="#{member.password.check}">비밀번호</label>
+            <input type="password" id="memberPasswordCheck" th:field="*{memberPasswordCheck}" class="form-control" oninput="checkPasswordMatch()" th:errorclass="field-error">
+            <div class="field-error" th:errors="*{memberPasswordCheck}"></div>
+            <!-- 비밀번호 일치 여부를 확인하는 메시지 -->
+            <div id="passwordMatchMessage" class="mt-2"></div>
+        </div>
+
+        <div>
+            <label for="memberName" th:text="#{member.name}">이름</label>
+            <input type="text" id="memberName" th:field="*{memberName}" class="form-control" th:errorclass="field-error">
+            <div class="field-error" th:errors="*{memberName}"></div>
+        </div>
+
+        <div>
+            <label for="age" th:text="#{member.age}">나이</label>
+            <input type="text" id="age" th:field="*{age}" class="form-control" th:errorclass="field-error">
+            <div class="field-error" th:errors="*{age}"></div>
+        </div>
+
+        <hr class="my-4">
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{home.signUp}">회원 가입</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg" onclick="location.href='/'" th:text="#{commons.cancel}" type="button">취소</button>
+            </div>
+        </div>
+    </form>
+
+</div> <!-- /container -->
+</body>
+</html>
