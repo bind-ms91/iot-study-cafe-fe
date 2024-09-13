@@ -3,46 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <script type="text/javascript">
+        function setFormAction() {
+            var form = document.getElementById('languageForm');
+            form.action = window.location.pathname + window.location.search;
+        }
 
-        // 언어 변경 시 입력 폼 데이터를 유지
         function setLanguageAndRetainData() {
+            var form = document.getElementById('languageForm');
             var params = new URLSearchParams(window.location.search);
             var language = document.getElementById('languageSelector').value;
 
-            // 현재 페이지의 모든 입력 요소 값을 sessionStorage에 추가
+            // 현재 페이지의 모든 입력 요소 값을 params에 추가
             document.querySelectorAll('input').forEach(input => {
-                if (input.name && input.type !== 'hidden' && input.type !== 'password') {
-                    sessionStorage.setItem(input.name, input.value);
+                if (input.name) {
+                    params.set(input.name, input.value);
                 }
             });
 
             // 언어 설정 값 추가
             params.set('lang', language);
-
-            // 페이지를 새로운 쿼리스트링으로 새로고침
             window.location.search = params.toString();
         }
 
-        // 폼 데이터 복원
-        function restoreFormDataFromSession() {
-            document.querySelectorAll('input').forEach(input => {
-                if (input.name && sessionStorage.getItem(input.name)) {
-                    input.value = sessionStorage.getItem(input.name);
-                }
-            });
-
-            sessionStorage.clear();
-        }
-
-        // 페이지가 로드될 때 실행
-        window.onload = function () {
-            restoreFormDataFromSession();
-        };
     </script>
 </head>
-<body>
+<body onload="setFormAction()">
 <header>
-    <!-- 언어 변경 폼 -->
     <form id="languageForm" method="get" style="position: fixed; top: 10px; right: 200px; display: flex; align-items: center;">
         <label for="languageSelector" style="margin-right: 10px;">Language:</label>
         <select name="lang" id="languageSelector" onchange="setLanguageAndRetainData()">
