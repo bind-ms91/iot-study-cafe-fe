@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스터디카페 좌석 예약</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .seat {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .seat.available {
+            background-color: #6BCB77;
+            color: white;
+        }
+        .seat.occupied {
+            background-color: #FF6B6B;
+            color: white;
+        }
+        .seat.double {
+            width: 130px;
+        }
+        .legend {
+            margin-top: 20px;
+        }
+        .legend div {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        .legend span {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+        .available-color {
+            background-color: #6BCB77;
+        }
+        .occupied-color {
+            background-color: #FF6B6B;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">스터디카페 좌석 예약</h1>
+
+    <!-- Room Information -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4"><strong>총 좌석:</strong> 52</div>
+        <div class="col-md-4"><strong>사용 가능:</strong> 32</div>
+        <div class="col-md-4"><strong>사용 중:</strong> 20</div>
+    </div>
+
+    <!-- Seat Layout -->
+    <div class="row g-3 justify-content-center">
+        <div class="col-auto">
+            <div class="seat available">1</div>
+        </div>
+        <div class="col-auto">
+            <div class="seat occupied">2</div>
+        </div>
+        <div class="col-auto">
+            <div class="seat available">3</div>
+        </div>
+        <div class="col-auto">
+            <div class="seat occupied">4</div>
+        </div>
+        <div class="col-auto">
+            <div class="seat available">5</div>
+        </div>
+        <div class="col-auto">
+            <div class="seat available">6</div>
+        </div>
+        <div class="col-auto">
+            <div class="seat occupied">7</div>
+        </div>
+        <div class="col-auto">
+            <div class="seat available">8</div>
+        </div>
+        <div class="col-auto">
+            <div class="seat double occupied">9-10</div>
+        </div>
+        <div class="col-auto">
+            <div class="seat available">11</div>
+        </div>
+        <!-- Add more seats as needed -->
+    </div>
+
+    <!-- Legend -->
+    <div class="legend text-center mt-4">
+        <div><span class="available-color"></span> 사용 가능</div>
+        <div><span class="occupied-color"></span> 사용 중</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-4">
+        <button class="btn btn-secondary me-2">이전 화면</button>
+        <button class="btn btn-primary">스터디룸 예약 현황</button>
+    </div>
+</div>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

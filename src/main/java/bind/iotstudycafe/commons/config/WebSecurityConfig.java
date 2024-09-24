@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,6 +39,7 @@ public class WebSecurityConfig {
 
     // 정적인 파일에 대한 요청들
     private static final String[] AUTH_WHITELIST = {
+
             // -- swagger ui
             "/api-docs",
             "/api-docs/**",
@@ -48,9 +50,16 @@ public class WebSecurityConfig {
             "/swagger/**",
             "/swagger-ui/**",
 
-            "/css/**"
+            "/error",
+
+            "/css/**",
+            "templates/**"
             // other public endpoints of your API may be appended to this array
     };
+
+    protected void configure(HttpSecurity http) throws Exception {
+
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,7 +69,7 @@ public class WebSecurityConfig {
                     // Swagger 관련 경로 모두 예외 처리
 //                    .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**")
 //                    .permitAll()
-//                    .requestMatchers("/**").permitAll()
+                    .requestMatchers("/", "/login", "/logout", "/members/save", "/members", "/members/check-id-popup", "members/check-duplicate").permitAll()
 //                    .requestMatchers("/css/**").permitAll()
                     .anyRequest().authenticated() // 그 외 요청은 인증 필요
             )
@@ -68,17 +77,20 @@ public class WebSecurityConfig {
             .cors(withDefaults())  // CORS 설정 추가
             .formLogin(form -> form
                     .loginPage("/")
-                    .loginProcessingUrl("login")
+//                    .loginProcessingUrl("/login")
                     .usernameParameter("loginId")
                     .passwordParameter("password")
                     .permitAll()
             )
             .logout( logout -> logout
-                    .logoutUrl("logoutt")
-                    .logoutRequestMatcher(new AntPathRequestMatcher("logoutt")) // logoutUrl과 logoutRequestMatcher가 둘다 설정되어있을경우 RequestMatcher가 우선적으로 실행된다.
+                    .logoutUrl("logout")
+//                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // logoutUrl과 logoutRequestMatcher가 둘다 설정되어있을경우 RequestMatcher가 우선적으로 실행된다.
                     .deleteCookies("JSESSIONID")  // 세션 쿠키 삭제
                     .permitAll()
             );
+//            .sessionManagement(session -> session
+//                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // 세션 사용하지 않음
+//            );
 
         return http.build();
     }

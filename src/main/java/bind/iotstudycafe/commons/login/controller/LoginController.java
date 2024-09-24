@@ -69,9 +69,10 @@ public class LoginController {
             responses = {@ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = LoginDto.class)))}
     )
     @PostMapping("/login")
-    @ResponseBody
     public String login(@Validated @ParameterObject @ModelAttribute("loginDto") LoginDto loginDto, BindingResult bindingResult
             ,@RequestParam(defaultValue ="/") String redirectURL, HttpServletRequest request, HttpServletResponse response) {
+
+        log.info("login controller");
 
         // 인증 요청 생성
         UsernamePasswordAuthenticationToken token =
@@ -278,7 +279,7 @@ public class LoginController {
     @Operation(summary = "로그아웃", description = "로그아웃",
             responses = {@ApiResponse(responseCode = "200", description = "로그아웃 성공")}
     )
-    @PostMapping("/logoutt")
+    @PostMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response,
                          @RequestParam(defaultValue = "/") String redirectURL) {
 
@@ -336,15 +337,6 @@ public class LoginController {
         }
 
     }
-
-//    @PostMapping("/logout")
-//    public String logoutV3(HttpServletRequest request) {
-//        HttpSession session = request.getSession(false);
-//        if(session != null) {
-//            session.invalidate();
-//        }
-//        return "redirect:/";
-//    }
 
     private static void expireCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("JSESSIONID", null);
