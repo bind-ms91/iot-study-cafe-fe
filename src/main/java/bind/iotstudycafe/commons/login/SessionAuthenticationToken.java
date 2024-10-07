@@ -9,7 +9,7 @@ import java.util.Collection;
 @Getter
 public class SessionAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
-    private String sessionId;
+    private final String sessionId;
 
     public SessionAuthenticationToken(Object principal, Object credentials, String sessionId, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);

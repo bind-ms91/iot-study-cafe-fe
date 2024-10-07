@@ -25,11 +25,16 @@
 
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
+        /*<![CDATA[*/
+
+            // 회원가입 성공 메시지 표시
             var success = [[${signupSuccess ?: 'null'}]];  // Thymeleaf 변수 `signupSuccess`를 JS 변수로 할당 기본값 사용
             if (success === true) {
                 alert(document.getElementById("signUpSuccessMessage").value);
             }
         });
+        
+        /*]]>*/
     </script>
 
 </head>

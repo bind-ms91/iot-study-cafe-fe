@@ -86,24 +86,18 @@ public class MemberController {
             return "members/signUpMemberForm";
         }
 
-//        // 회원 가입 처리
-//        Member member = memberService.saveMember(memberSaveDto);
-//
-//        // 회원 가입 성공
-//        if (member != null) {
-//            return "redirect:/";
-//        }
-
+        // 회원 가입 처리
+        Member member = memberService.saveMember(memberSaveDto);
+        member = null;
         // 가입 성공 시 redirect 후에 성공 메시지를 전달
-//        if (true) {
-//            redirectAttributes.addFlashAttribute("signupSuccess", true);  // 성공 메시지 전달
-//            return "redirect:/";
-//        }
-
-        // 회원 가입 실패 시 처리
-        model.addAttribute("signupSuccess", false);
-        return "members/signUpMemberForm";
-
+        if (member != null) {
+            redirectAttributes.addFlashAttribute("signupSuccess", true);  // 성공 메시지 전달
+            return "redirect:/";
+        } else {
+            // 회원 가입 실패 시 처리
+            model.addAttribute("signupSuccess", false);
+            return "members/signUpMemberForm";
+        }
     }
 
 

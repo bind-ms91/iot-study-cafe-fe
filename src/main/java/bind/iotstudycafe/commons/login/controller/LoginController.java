@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +38,7 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
 
 
 
@@ -65,36 +66,70 @@ public class LoginController {
 //        return null;
 //    }
 
-    @Operation(summary = "로그인", description = "동기 로그인",
-            responses = {@ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = LoginDto.class)))}
-    )
+//    @Operation(summary = "로그인", description = "동기 로그인",
+//            responses = {@ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = LoginDto.class)))}
+//    )
+//    @PostMapping("/login")
+//    public String login(@Validated @ParameterObject @ModelAttribute("loginDto") LoginDto loginDto, BindingResult bindingResult
+//            ,@RequestParam(defaultValue ="/loginHome") String redirectURL, HttpServletRequest request, HttpServletResponse response) {
+//
+//        log.info("login controller");
+//
+//        // 인증 요청 생성
+//        UsernamePasswordAuthenticationToken token =
+//                new UsernamePasswordAuthenticationToken(loginDto.getLoginId(), loginDto.getPassword());
+//
+//        // 인증 시도
+////        Authentication authentication = authenticationManager.authenticate(token);
+//        Authentication authentication = loginService.authenticate(token);
+//
+//        // 인증 성공 시, 컨텍스트에 저장
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        // 세션 ID를 인증 객체에서 가져옴
+//        String sessionId = ((SessionAuthenticationToken) authentication).getSessionId();
+//
+//        log.info("controller sessionId: {}", sessionId);
+//
+//        response.addHeader(HttpHeaders.SET_COOKIE, sessionId);
+//
+//        // 로그인 성공 후 리다이렉트
+//        return "redirect:"+redirectURL;
+//    }
+
+    @Operation(summary = "로그인", description = "동기 로그인")
     @PostMapping("/login")
-    public String login(@Validated @ParameterObject @ModelAttribute("loginDto") LoginDto loginDto, BindingResult bindingResult
-            ,@RequestParam(defaultValue ="/") String redirectURL, HttpServletRequest request, HttpServletResponse response) {
+    public String login(@Validated @ModelAttribute("loginDto") LoginDto loginDto,
+                        BindingResult bindingResult,
+                        @RequestParam(defaultValue = "/loginHome") String redirectURL,
+                        HttpServletResponse response) {
 
-        log.info("login controller");
+        log.info("login controller - login request received for user: {}", loginDto.getLoginId());
 
-        // 인증 요청 생성
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(loginDto.getLoginId(), loginDto.getPassword());
+        if (bindingResult.hasErrors()) {
+            log.error("Validation errors: {}", bindingResult.getAllErrors());
+            return "/";  // 로그인 폼으로 다시 리턴
+        }
 
-        // 인증 시도
-        Authentication authentication = authenticationManager.authenticate(token);
+        try {
+            // 서비스에서 인증 처리 및 세션 ID 반환
+            String sessionId = loginService.loginAndCreateSession(loginDto);
 
-        // 인증 성공 시, 컨텍스트에 저장
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            // 세션 ID를 응답의 쿠키에 저장
+            response.addHeader(HttpHeaders.SET_COOKIE, sessionId);
+            log.info("Login successful, sessionId set: {}", sessionId);
 
-        // 세션 ID를 인증 객체에서 가져옴
-        String sessionId = ((SessionAuthenticationToken) authentication).getSessionId();
-
-        log.info("controller sessionId: {}", sessionId);
-
-        response.addHeader(HttpHeaders.SET_COOKIE, sessionId);
-
-        // 로그인 성공 후 리다이렉트
-        return "redirect:"+redirectURL;
+            // 로그인 성공 후 리다이렉트
+            return "redirect:" + redirectURL;
+        } catch (BadCredentialsException e) {
+            log.error("Invalid credentials for user: {}", loginDto.getLoginId());
+            bindingResult.reject("loginFail", "Invalid username or password.");
+            return "redirect:/";
+        } catch (Exception e) {
+            log.error("Unexpected error occurred: {}", e.getMessage());
+            return "redirect:/";
+        }
     }
-
 
     @Operation(summary = "로그인", description = "동기 로그인",
             responses = {@ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = LoginDto.class)))}

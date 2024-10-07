@@ -1,115 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스터디카페 좌석 예약</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .seat {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .seat.available {
-            background-color: #6BCB77;
-            color: white;
-        }
-        .seat.occupied {
-            background-color: #FF6B6B;
-            color: white;
-        }
-        .seat.double {
-            width: 130px;
-        }
-        .legend {
-            margin-top: 20px;
-        }
-        .legend div {
-            display: inline-flex;
-            align-items: center;
-            margin-right: 15px;
-        }
-        .legend span {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
-            border-radius: 3px;
-        }
-        .available-color {
-            background-color: #6BCB77;
-        }
-        .occupied-color {
-            background-color: #FF6B6B;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>좌석 선택</title>
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr); /* 9열 그리드 */
+      grid-gap: 5px;
+      width: 80%;
+      margin: auto;
+      padding: 20px;
+    }
+    .seat, .room, .kiosk, .break-room {
+      text-align: center;
+      padding: 20px;
+      border: 2px solid #8b5e3c;
+      cursor: pointer;
+    }
+    .seat {
+      background-color: #fff;
+      font-size: 14px;
+    }
+    .available {
+      background-color: #80f491;
+    }
+    .occupied {
+      background-color: #fa9898;
+    }
+    .room, .kiosk, .break-room {
+      background-color: #d1e7fd;
+    }
+    .status {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    /* 크기 조정 */
+    .group-room {
+      grid-column: span 2; /* 방은 2열 차지 */
+    }
+    .kiosk, .break-room {
+      grid-column: span 2; /* 기타 방은 2열 차지 */
+    }
+    .seat {
+      grid-column: span 1; /* 좌석은 1열 차지 */
+    }
+    /* 오른쪽 상단 상태표시 */
+    .status {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #ffffff;
+      border: 2px solid #8b5e3c;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .title {
+      grid-column: span 9;
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container mt-5">
-    <h1 class="text-center mb-4">스터디카페 좌석 예약</h1>
+<div class="container">
+  <div class="title">스터디카페 좌석 예약</div>
+  <div class="status" th:object="${member}">
+    <span>사용가능: <span style="background-color: #d1e7fd; padding: 5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+    <span>사용중: <span style="background-color: #fdd1d1; padding: 5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+  </div>
 
-    <!-- Room Information -->
-    <div class="row text-center mb-4">
-        <div class="col-md-4"><strong>총 좌석:</strong> 52</div>
-        <div class="col-md-4"><strong>사용 가능:</strong> 32</div>
-        <div class="col-md-4"><strong>사용 중:</strong> 20</div>
-    </div>
+  <!-- 좌석 및 방 구성 -->
+  <div class="room available" onclick="handleClick(this)">2인실</div>
+  <div class="room occupied" onclick="handleClick(this)">2인실</div>
+  <div class="room" onclick="handleClick(this)">2인실</div>
+  <div class="room" onclick="handleClick(this)">사무실</div>
 
-    <!-- Seat Layout -->
-    <div class="row g-3 justify-content-center">
-        <div class="col-auto">
-            <div class="seat available">1</div>
-        </div>
-        <div class="col-auto">
-            <div class="seat occupied">2</div>
-        </div>
-        <div class="col-auto">
-            <div class="seat available">3</div>
-        </div>
-        <div class="col-auto">
-            <div class="seat occupied">4</div>
-        </div>
-        <div class="col-auto">
-            <div class="seat available">5</div>
-        </div>
-        <div class="col-auto">
-            <div class="seat available">6</div>
-        </div>
-        <div class="col-auto">
-            <div class="seat occupied">7</div>
-        </div>
-        <div class="col-auto">
-            <div class="seat available">8</div>
-        </div>
-        <div class="col-auto">
-            <div class="seat double occupied">9-10</div>
-        </div>
-        <div class="col-auto">
-            <div class="seat available">11</div>
-        </div>
-        <!-- Add more seats as needed -->
-    </div>
+  <!-- 좌석 -->
+  <div class="seat occupied" onclick="handleClick(this)">1</div>
+  <div class="seat available" onclick="handleClick(this)">2</div>
+  <div class="seat available" onclick="handleClick(this)">3</div>
+  <div class="seat available" onclick="handleClick(this)">4</div>
+  <div class="seat available" onclick="handleClick(this)">45</div>
+  <div class="seat available" onclick="handleClick(this)">46</div>
+  <div class="seat available" onclick="handleClick(this)">47</div>
+  <div class="seat available" onclick="handleClick(this)">48</div>
+  <div class="seat available" onclick="handleClick(this)">49</div>
+  <div class="seat available" onclick="handleClick(this)">50</div>
+  <div class="seat available" onclick="handleClick(this)">51</div>
+  <div class="seat available" onclick="handleClick(this)">52</div>
 
-    <!-- Legend -->
-    <div class="legend text-center mt-4">
-        <div><span class="available-color"></span> 사용 가능</div>
-        <div><span class="occupied-color"></span> 사용 중</div>
-    </div>
+  <!-- 중간 좌석 -->
+  <div class="seat available" onclick="handleClick(this)">1</div>
+  <div class="seat occupied" onclick="handleClick(this)">2</div>
+  <div class="seat available" onclick="handleClick(this)">3</div>
+  <div class="seat available" onclick="handleClick(this)">4</div>
+  <div class="seat available" onclick="handleClick(this)">5</div>
+  <div class="seat available" onclick="handleClick(this)">6</div>
+  <div class="seat available" onclick="handleClick(this)">7</div>
+  <div class="seat available" onclick="handleClick(this)">8</div>
+  <div class="seat available" onclick="handleClick(this)">9</div>
+  <div class="seat available" onclick="handleClick(this)">10</div>
 
-    <!-- Footer -->
-    <div class="text-center mt-4">
-        <button class="btn btn-secondary me-2">이전 화면</button>
-        <button class="btn btn-primary">스터디룸 예약 현황</button>
-    </div>
+  <!-- 우측 좌석 -->
+  <div class="seat available" onclick="handleClick(this)">23</div>
+  <div class="seat available" onclick="handleClick(this)">24</div>
+  <div class="seat available" onclick="handleClick(this)">25</div>
+  <div class="seat available" onclick="handleClick(this)">26</div>
+  <div class="seat available" onclick="handleClick(this)">27</div>
+  <div class="seat available" onclick="handleClick(this)">28</div>
+  <div class="seat available" onclick="handleClick(this)">29</div>
+  <div class="seat available" onclick="handleClick(this)">30</div>
+
+  <!-- 기타 방 -->
+  <div class="break-room" onclick="handleClick(this)">휴게실</div>
+  <div class="room" onclick="handleClick(this)">3인실</div>
+  <div class="kiosk" onclick="handleClick(this)">키오스크</div>
+  <div class="exit" onclick="handleClick(this)">출구</div>
 </div>
 
-<script src="/js/bootstrap.bundle.min.js"></script>
+<script>
+  function handleClick(element) {
+    alert(element.innerText + " 선택됨");
+    // 추가적인 동작을 여기에 구현할 수 있습니다.
+  }
+</script>
 </body>
 </html>

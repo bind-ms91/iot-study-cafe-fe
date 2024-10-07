@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bind Study Cafe</title>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .seat {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .room {
+            width: 100px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+
+        .occupied {
+            background-color: #FF6B6B;
+        }
+
+        .available {
+            background-color: #6BCB77;
+        }
+
+        .label {
+            grid-column: span 10;
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .section-title {
+            grid-column: span 10;
+            text-align: left;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1 class="text-center mb-4">스터디카페 좌석 예약</h1>
+
+    <div class="layout">
+        <!-- First Section -->
+        <div class="section-title">Open Seats</div>
+        <div class="seat available">1</div>
+        <div class="seat occupied">2</div>
+        <div class="room available">3</div>
+        <div class="seat occupied">4</div>
+        <!-- More seats as needed -->
+
+        <!-- Second Section -->
+        <div class="section-title">Focus Seats</div>
+        <div class="seat available">5</div>
+        <div class="seat occupied">6</div>
+        <!-- More seats as needed -->
+
+        <div class="label">Room Legend: Available / Occupied</div>
+    </div>
+
+</body>
+</html>
