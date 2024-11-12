@@ -28,6 +28,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import reactor.core.publisher.Mono;
 
 @Controller
@@ -102,13 +103,14 @@ public class LoginController {
     public String login(@Validated @ModelAttribute("loginDto") LoginDto loginDto,
                         BindingResult bindingResult,
                         @RequestParam(defaultValue = "/loginHome") String redirectURL,
+                        RedirectAttributes redirectAttributes,
                         HttpServletResponse response) {
 
         log.info("login controller - login request received for user: {}", loginDto.getLoginId());
 
         if (bindingResult.hasErrors()) {
             log.error("Validation errors: {}", bindingResult.getAllErrors());
-            return "/";  // 로그인 폼으로 다시 리턴
+            return "home";  // 로그인 폼으로 다시 리턴
         }
 
         try {
@@ -124,10 +126,11 @@ public class LoginController {
         } catch (BadCredentialsException e) {
             log.error("Invalid credentials for user: {}", loginDto.getLoginId());
             bindingResult.reject("loginFail", "Invalid username or password.");
-            return "redirect:/";
+//            redirectAttributes.addFlashAttribute("loginFail", true);  // 성공 메시지 전달
+            return "home";
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
-            return "redirect:/";
+            return "home";
         }
     }
 

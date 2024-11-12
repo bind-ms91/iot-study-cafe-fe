@@ -21,21 +21,27 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 300px;
         }
+        /* Close button in the alert box to be positioned at the top-left corner */
+        .alert .btn-close {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+        }
     </style>
 
-    <script type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function() {
-        /*<![CDATA[*/
+    <!--    <script type="text/javascript">-->
+    <!--        document.addEventListener("DOMContentLoaded", function() {-->
+    <!--        /*<![CDATA[*/-->
 
-            // 회원가입 성공 메시지 표시
-            var success = [[${signupSuccess ?: 'null'}]];  // Thymeleaf 변수 `signupSuccess`를 JS 변수로 할당 기본값 사용
-            if (success === true) {
-                alert(document.getElementById("signUpSuccessMessage").value);
-            }
-        });
-        
-        /*]]>*/
-    </script>
+    <!--            // 회원가입 성공 메시지 표시-->
+    <!--            var success = [[${signupSuccess ?: 'null'}]];  // Thymeleaf 변수 `signupSuccess`를 JS 변수로 할당 기본값 사용-->
+    <!--            if (success === true) {-->
+    <!--                alert(document.getElementById("signUpSuccessMessage").value);-->
+    <!--            }-->
+    <!--        });-->
+    <!--        -->
+    <!--        /*]]>*/-->
+    <!--    </script>-->
 
 </head>
 <body>
@@ -44,30 +50,38 @@
     <div th:replace="~{ commons/header.html}"></div>
     <!-- 공통 헤더 끝 -->
 
-    <input type="hidden" id="signUpSuccessMessage" th:value="#{signUp.success}"> <!-- 회원가입 성공 메시지 -->
+    <!--    <input type="hidden" id="signUpSuccessMessage" th:value="#{signUp.success}"> &lt;!&ndash; 회원가입 성공 메시지 &ndash;&gt;-->
 
     <div class="login-container">
-    <h2 class="text-center mb-4">Login to Study Cafe</h2>
+        <h2 class="text-center mb-4">Login to Study Cafe</h2>
 
-    <form action="/login" th:object="${loginDto}" method="post">
-
-        <div th:if="${#fields.hasGlobalErrors()}">
-            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
-               th:text="${err}">글로벌 오류 메시지</p>
+        <!-- 회원가입 성공 시 alert 메시지 표시 -->
+        <div th:if="${signUpSuccess}" id="signUpAlert" class="alert alert-success fade show d-flex align-items-center" role="alert">
+            <p th:text="#{signUp.success}">회원가입이 성공적으로 완료되었습니다!</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
-        <div class="mb-3">
+        <form action="/login" th:object="${loginDto}" method="post">
+
+            <div th:if="${#fields.hasAnyErrors()}">
+                <p class="field-error" th:each="err : ${#fields.errors()}"
+                   th:text="${err}">글로벌 오류 메시지</p>
+            </div>
+
+
+            <div class="mb-3">
                 <input type="text" class="form-control" name="loginId" th:field="*{loginId}" th:placeholder="#{member.id}" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" name="password" th:placeholder="#{member.password}" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" th:text="#{home.login}">Login</button>
+        </form>
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary w-100" th:onclick="|location.href='@{/members/save}'|" th:text="#{home.signUp}">Sign up</button>
         </div>
-        <div class="mb-3">
-            <input type="password" class="form-control" name="password" th:placeholder="#{member.password}" required>
-        </div>
-        <button type="submit" class="btn btn-primary w-100" th:text="#{home.login}">Login</button>
-    </form>
-    <div class="text-center mt-3">
-        <button type="submit" class="btn btn-primary w-100" th:onclick="|location.href='@{/members/save}'|" th:text="#{home.signUp}">Sign up</button>
     </div>
-</div>
-
+    <!-- Bootstrap JavaScript 파일 추가 -->
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

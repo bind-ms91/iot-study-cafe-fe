@@ -5,6 +5,7 @@ import bind.iotstudycafe.member.domain.MemberGrade;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,8 @@ import org.hibernate.validator.constraints.Range;
 public class MemberSaveDto {
 
     @Schema(description = "로그인 ID")
-    @NotBlank
+    @NotBlank(message = "아이디는 필수 입력값입니다.")
+    @Pattern(regexp = "^[a-z0-9]{4,20}$", message = "아이디는 영어 소문자와 숫자만 사용하여 4~20자리여야 합니다.")
     private String memberId;
 
     @Schema(description = "비밀번호")

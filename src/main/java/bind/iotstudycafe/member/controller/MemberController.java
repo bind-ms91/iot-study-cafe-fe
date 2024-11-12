@@ -49,7 +49,9 @@ public class MemberController {
     @PostMapping("/check-duplicate")
     @ResponseBody
     public boolean checkDuplicateId(@RequestBody Map<String, String> requestData) {
+
         String memberId = requestData.get("memberId");
+
 
         if (memberId == null || memberId.isEmpty()) {
             log.info("memberId is null or empty");
@@ -87,17 +89,24 @@ public class MemberController {
         }
 
         // 회원 가입 처리
-        Member member = memberService.saveMember(memberSaveDto);
-        member = null;
+//        Member member = memberService.saveMember(memberSaveDto);
+        Member member = null;
+        redirectAttributes.addFlashAttribute("signUpSuccess", true);  // 성공 메시지 전달
+        return "redirect:/";
         // 가입 성공 시 redirect 후에 성공 메시지를 전달
-        if (member != null) {
-            redirectAttributes.addFlashAttribute("signupSuccess", true);  // 성공 메시지 전달
-            return "redirect:/";
-        } else {
-            // 회원 가입 실패 시 처리
-            model.addAttribute("signupSuccess", false);
-            return "members/signUpMemberForm";
-        }
+//        if (member != null) {
+//            redirectAttributes.addFlashAttribute("signupSuccess", true);  // 성공 메시지 전달
+//            return "redirect:/";
+//        } else {
+//            // 회원 가입 실패 시 처리
+//            model.addAttribute("signupSuccess", false);
+//            return "members/signUpMemberForm";
+
+            //PRG(Post-Redirect-Get) 패턴
+//            redirectAttributes.addFlashAttribute("signupSuccess", false);  // 성공 메시지 전달
+//            redirectAttributes.addFlashAttribute("memberSaveDto", memberSaveDto);  // 성공 메시지 전달
+//            return "redirect:" + "/members/save";
+//        }
     }
 
 
