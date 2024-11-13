@@ -55,8 +55,14 @@
     <div class="login-container">
         <h2 class="text-center mb-4">Login to Study Cafe</h2>
 
+        <!-- 로그인 실패 시 오류 메시지 표시 -->
+        <div th:if="${loginFail == false}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <p th:text="#{loginFail}">아이디 또는 비밀번호가 일치하지 않습니다.</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <!-- 회원가입 성공 시 alert 메시지 표시 -->
-        <div th:if="${signUpSuccess}" id="signUpAlert" class="alert alert-success fade show d-flex align-items-center" role="alert">
+        <div th:if="${signUpSuccess == true}" class="alert alert-success fade show d-flex align-items-center" role="alert">
             <p th:text="#{signUp.success}">회원가입이 성공적으로 완료되었습니다!</p>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>

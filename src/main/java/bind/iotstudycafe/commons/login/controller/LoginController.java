@@ -98,6 +98,41 @@ public class LoginController {
 //        return "redirect:"+redirectURL;
 //    }
 
+//    @Operation(summary = "로그인", description = "동기 로그인")
+//    @PostMapping("/login")
+//    public String login(@Validated @ModelAttribute("loginDto") LoginDto loginDto,
+//                        BindingResult bindingResult,
+//                        @RequestParam(defaultValue = "/loginHome") String redirectURL,
+//                        RedirectAttributes redirectAttributes,
+//                        HttpServletResponse response) {
+//
+//        log.info("login controller - login request received for user: {}", loginDto.getLoginId());
+//
+//        if (bindingResult.hasErrors()) {
+//            log.error("Validation errors: {}", bindingResult.getAllErrors());
+//            return "home";  // 로그인 폼으로 다시 리턴
+//        }
+//
+//        try {
+//            // 서비스에서 인증 처리 및 세션 ID 반환
+//            String sessionId = loginService.loginAndCreateSession(loginDto);
+//
+//            // 세션 ID를 응답의 쿠키에 저장
+//            response.addHeader(HttpHeaders.SET_COOKIE, sessionId);
+//            log.info("Login successful, sessionId set: {}", sessionId);
+//
+//            // 로그인 성공 후 리다이렉트
+//            return "redirect:" + redirectURL;
+//        } catch (BadCredentialsException e) {
+//            log.error("Invalid credentials for user: {}", loginDto.getLoginId());
+//            redirectAttributes.addFlashAttribute("loginFail", false);  // 실패 메시지 전달
+//            return "redirect:/";
+//        } catch (Exception e) {
+//            log.error("Unexpected error occurred: {}", e.getMessage());
+//            return "home";
+//        }
+//    }
+
     @Operation(summary = "로그인", description = "동기 로그인")
     @PostMapping("/login")
     public String login(@Validated @ModelAttribute("loginDto") LoginDto loginDto,
@@ -108,30 +143,14 @@ public class LoginController {
 
         log.info("login controller - login request received for user: {}", loginDto.getLoginId());
 
+        // 유효성 검사 실패 시 홈 화면으로 리턴
         if (bindingResult.hasErrors()) {
-            log.error("Validation errors: {}", bindingResult.getAllErrors());
-            return "home";  // 로그인 폼으로 다시 리턴
-        }
-
-        try {
-            // 서비스에서 인증 처리 및 세션 ID 반환
-            String sessionId = loginService.loginAndCreateSession(loginDto);
-
-            // 세션 ID를 응답의 쿠키에 저장
-            response.addHeader(HttpHeaders.SET_COOKIE, sessionId);
-            log.info("Login successful, sessionId set: {}", sessionId);
-
-            // 로그인 성공 후 리다이렉트
-            return "redirect:" + redirectURL;
-        } catch (BadCredentialsException e) {
-            log.error("Invalid credentials for user: {}", loginDto.getLoginId());
-            bindingResult.reject("loginFail", "Invalid username or password.");
-//            redirectAttributes.addFlashAttribute("loginFail", true);  // 성공 메시지 전달
-            return "home";
-        } catch (Exception e) {
-            log.error("Unexpected error occurred: {}", e.getMessage());
+            logValidationErrors(bindingResult);
             return "home";
         }
+
+        // 로그인 처리
+        return handleLogin(loginDto, redirectURL, redirectAttributes, response);
     }
 
     @Operation(summary = "로그인", description = "동기 로그인",
@@ -342,6 +361,43 @@ public class LoginController {
 
         // 로그아웃 성공 후 리다이렉트
         return "redirect:"+redirectURL;
+    }
+
+    private void logValidationErrors(BindingResult bindingResult) {
+        log.error("Validation errors: {}", bindingResult.getAllErrors());
+    }
+
+    private String handleLogin(LoginDto loginDto, String redirectURL, RedirectAttributes redirectAttributes, HttpServletResponse response) {
+        try {
+            // 서비스에서 인증 처리 및 세션 ID 반환
+            String sessionId = loginService.loginAndCreateSession(loginDto);
+
+            // 세션 ID를 응답의 쿠키에 저장
+            response.addHeader(HttpHeaders.SET_COOKIE, sessionId);
+            log.info("Login successful, sessionId set: {}", sessionId);
+
+            // 로그인 성공 후 리다이렉트
+            return "redirect:" + redirectURL;
+
+        } catch (BadCredentialsException e) {
+            // 로그인 실패 시 루트로 리다이렉트하고 오류 메시지 전달
+            logInvalidCredentials(loginDto);
+            redirectAttributes.addFlashAttribute("loginFail", false);
+            return "redirect:/";
+
+        } catch (Exception e) {
+            // 예상치 못한 오류 처리
+            logUnexpectedError(e);
+            return "home";
+        }
+    }
+
+    private void logInvalidCredentials(LoginDto loginDto) {
+        log.error("Invalid credentials for user: {}", loginDto.getLoginId());
+    }
+
+    private void logUnexpectedError(Exception e) {
+        log.error("Unexpected error occurred: {}", e.getMessage());
     }
 
     private static void extractedSessionId(HttpServletResponse response, ResponseEntity<Member> responseEntity) {
