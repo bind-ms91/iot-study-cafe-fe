@@ -382,7 +382,7 @@ public class LoginController {
         } catch (BadCredentialsException e) {
             // 로그인 실패 시 루트로 리다이렉트하고 오류 메시지 전달
             logInvalidCredentials(loginDto);
-            redirectAttributes.addFlashAttribute("loginFail", false);
+            redirectAttributes.addFlashAttribute("loginFail", true);
             return "redirect:/";
 
         } catch (Exception e) {
